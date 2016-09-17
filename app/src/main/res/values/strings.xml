@@ -10,7 +10,12 @@
     <string name="error_invalid_password">This password is too short</string>
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_field_required">This field is required</string>
-    <string name="permission_rationale">"Contacts permissions are needed for providing email
+    <string name="permission_rationale">Contacts permissions are needed for providing email
         completions."
     </string>
+    <string name="msg_error_login_btnLogin">Login</string>
+    <string name="msg_error_login_password">Password required</string>
+    <string name="msg_error_login_user">User required</string>
+    <string name="msg_error_login_password_incorrect">This password is incorrect</string>
+    <string name="msg_error_login_user_incorrect">This user is incorrect</string>
 </resources>
