@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">Wane</string>
 
+    <!-- name activities -->
+    <string name="activity_main">Purchase Orders</string>
+
     <!-- Strings related to login -->
     <string name="prompt_user">User</string>
     <string name="prompt_password">Password</string>
@@ -18,4 +21,8 @@
     <string name="msg_error_login_user">User required</string>
     <string name="msg_error_login_password_incorrect">This password is incorrect</string>
     <string name="msg_error_login_user_incorrect">This user is incorrect</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="menu_main_activity_opt1">Refresh</string>
+    <string name="menu_main_activity_opt2">opt 2</string>
+    <string name="menu_main_activity_opt3">opt 3</string>
 </resources>

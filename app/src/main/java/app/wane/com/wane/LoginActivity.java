@@ -3,6 +3,7 @@ package app.wane.com.wane;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -32,6 +33,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
+    private Intent intent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -172,6 +174,8 @@ public class LoginActivity extends AppCompatActivity {
             if (success) {
                 //finish();
                 Log.i(logLogin, "Correct credentials .......");
+                intent = new Intent(LoginActivity.this, MainActivity.class);
+                startActivity(intent);
             } else {
                 msg = Toast.makeText(
                                 getApplicationContext(),
