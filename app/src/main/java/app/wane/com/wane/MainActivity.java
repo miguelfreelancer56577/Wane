@@ -1,5 +1,6 @@
 package app.wane.com.wane;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -14,12 +15,17 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String logMainActivity = "MAIN_ACTIVITY--->";
 
+    private View mProgressView;
+    private Pedidos pedidos;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        mProgressView = findViewById(R.id.activity_progress);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -29,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
+
     }
 
     @Override
@@ -43,12 +50,42 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
         if (id == R.id.opt1) {
             Log.i(logMainActivity, "opt 1");
+            //get pedidos
+            showProgress(true);
+            pedidos = new Pedidos();
+            pedidos.execute((Void) null);
             return true;
         }else if(id == R.id.opt2){
             Log.i(logMainActivity, "opt 2");
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public class Pedidos extends AsyncTask<Void, Void, Boolean> {
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            Log.i(logMainActivity, "get pedidos");
+            return true;
+        }
+
+        @Override
+        protected void onPostExecute(final Boolean success) {
+            pedidos = null;
+            showProgress(false);
+
+        }
+
+        @Override
+        protected void onCancelled() {
+            pedidos = null;
+            showProgress(false);
+        }
+    }
+
+    private void showProgress(final boolean show) {
+        mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
     }
 
 }
