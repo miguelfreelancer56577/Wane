@@ -1,13 +1,20 @@
 package app.wane.com.soport;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * Created by Maricruz on 23/09/2016.
  */
 public class HeaderRequest {
+    @JsonProperty("service")
     protected String service;
+    @JsonProperty("type")
     protected String type;
+    @JsonProperty("device")
     protected String device;
+    @JsonProperty("token")
     protected String token;
+    @JsonProperty("option")
     protected String option;
 
     public HeaderRequest(String service, String type, String device, String token, String option) {
@@ -19,34 +26,42 @@ public class HeaderRequest {
     }
 
     public String getService() {
+
         return service;
     }
 
     public void setService(String service) {
+
         this.service = service;
     }
 
     public String getType() {
+
         return type;
     }
 
     public void setType(String type) {
+
         this.type = type;
     }
 
     public String getDevice() {
+
         return device;
     }
 
     public void setDevice(String device) {
+
         this.device = device;
     }
 
     public String getToken() {
+
         return token;
     }
 
     public void setToken(String token) {
+
         this.token = token;
     }
 
@@ -55,6 +70,7 @@ public class HeaderRequest {
     }
 
     public void setOption(String option) {
+
         this.option = option;
     }
 

@@ -1,5 +1,7 @@
 package app.wane.com.request;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import app.wane.com.model.User;
 import app.wane.com.soport.HeaderRequest;
 
@@ -8,6 +10,7 @@ import app.wane.com.soport.HeaderRequest;
  * Created by mangelt on 23/09/2016.
  */
 public class UserRequest extends HeaderRequest{
+    @JsonProperty("user")
     protected User user;
 
     public UserRequest(String service, String type, String device, String token, String option, User user) {
