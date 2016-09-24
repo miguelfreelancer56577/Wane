@@ -26,7 +26,8 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/activity_main"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".StatusMessenger"></activity>
     </application>
 
 </manifest>
