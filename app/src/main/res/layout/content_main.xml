@@ -12,4 +12,9 @@
     tools:context="app.wane.com.wane.MainActivity"
     tools:showIn="@layout/activity_main">
 
+    <Spinner
+        android:id="@+id/CmbOpciones"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" />
+
 </RelativeLayout>

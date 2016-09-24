@@ -10,6 +10,13 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import app.wane.com.model.User;
+import app.wane.com.request.UserRequest;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -17,6 +24,10 @@ public class MainActivity extends AppCompatActivity {
 
     private View mProgressView;
     private Pedidos pedidos;
+    private String[] datos;
+    private ArrayAdapter<String> adaptador;
+    private Spinner cmbOpciones;
+    private MainActivity mainActivity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,8 +35,18 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
+        datos = new String[]{"Elem1","Elem2","Elem3","Elem4","Elem5"};
+        cmbOpciones = (Spinner)findViewById(R.id.CmbOpciones);
+        mainActivity = this;
         mProgressView = findViewById(R.id.activity_progress);
+
+        try {
+            ObjectMapper mp = new ObjectMapper();
+            UserRequest userRequest = new UserRequest("log-in", "response", "messenger", "0", "log-in", new User("admin", "admin"));
+            Log.i(logMainActivity, mp.writeValueAsString(userRequest));
+        } catch (Exception e) {
+            Log.e(logMainActivity, "ERROR to write json", e);
+        }
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -74,6 +95,10 @@ public class MainActivity extends AppCompatActivity {
         protected void onPostExecute(final Boolean success) {
             pedidos = null;
             showProgress(false);
+
+            adaptador = new ArrayAdapter<String>(mainActivity,android.R.layout.simple_spinner_item, datos);
+            adaptador.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            cmbOpciones.setAdapter(adaptador);
 
         }
 
