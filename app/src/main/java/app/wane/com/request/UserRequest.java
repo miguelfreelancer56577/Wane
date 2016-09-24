@@ -1,13 +1,13 @@
 package app.wane.com.request;
 
 import app.wane.com.model.User;
-import app.wane.com.soport.Header;
+import app.wane.com.soport.HeaderRequest;
 
 
 /**
  * Created by mangelt on 23/09/2016.
  */
-public class UserRequest extends Header{
+public class UserRequest extends HeaderRequest{
     protected User user;
 
     public UserRequest(String service, String type, String device, String token, String option, User user) {

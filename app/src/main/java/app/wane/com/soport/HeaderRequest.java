@@ -1,17 +1,16 @@
 package app.wane.com.soport;
 
 /**
- * Created by mangelt on 23/09/2016.
+ * Created by Maricruz on 23/09/2016.
  */
-public class Header {
-
+public class HeaderRequest {
     protected String service;
     protected String type;
     protected String device;
     protected String token;
     protected String option;
 
-    public Header(String service, String type, String device, String token, String option) {
+    public HeaderRequest(String service, String type, String device, String token, String option) {
         this.service = service;
         this.type = type;
         this.device = device;
@@ -62,9 +61,9 @@ public class Header {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Header)) return false;
+        if (!(o instanceof HeaderRequest)) return false;
 
-        Header header = (Header) o;
+        HeaderRequest header = (HeaderRequest) o;
 
         if (!getService().equals(header.getService())) return false;
         if (!getType().equals(header.getType())) return false;
@@ -94,4 +93,5 @@ public class Header {
                 ", option='" + option + '\'' +
                 '}';
     }
+
 }
