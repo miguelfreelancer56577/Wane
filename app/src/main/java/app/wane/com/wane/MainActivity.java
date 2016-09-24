@@ -17,6 +17,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import app.wane.com.model.User;
 import app.wane.com.request.UserRequest;
+import app.wane.com.soport.TokenRest;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -42,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
 
         try {
             ObjectMapper mp = new ObjectMapper();
-            UserRequest userRequest = new UserRequest("log-in", "response", "messenger", "0", "log-in", new User("admin", "admin"));
+            UserRequest userRequest = new UserRequest("log-in", "request", "messenger", TokenRest.val, "log-in", new User("admin", "admin"));
             Log.i(logMainActivity, mp.writeValueAsString(userRequest));
         } catch (Exception e) {
             Log.e(logMainActivity, "ERROR to write json", e);
