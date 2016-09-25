@@ -181,8 +181,6 @@ public class LoginActivity extends AppCompatActivity {
                                 getApplicationContext(),
                                 "User or Password incorrect",
                                 Toast.LENGTH_LONG);
-                mPasswordView.setText("");
-                mUserView.setText("");
                 msg.show();
                 /*
                 mPasswordView.setError(getString(R.string.msg_error_login_password_incorrect));
@@ -191,6 +189,9 @@ public class LoginActivity extends AppCompatActivity {
                 mUserView.requestFocus();
                 */
             }
+            //clear form login
+            mPasswordView.setText("");
+            mUserView.setText("");
         }
 
         @Override
