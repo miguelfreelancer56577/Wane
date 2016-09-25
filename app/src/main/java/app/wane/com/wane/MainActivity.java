@@ -73,9 +73,8 @@ public class MainActivity extends AppCompatActivity {
         btnSaveStatusMessenger.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showProgress(true);
-                changeStatus = new ChangeStatus();
-                changeStatus.execute((Void) null);
+                //showProgress(true);
+                Log.i(statusMessenger, "change status");
             }
         });
 
@@ -103,6 +102,8 @@ public class MainActivity extends AppCompatActivity {
         }else if(id == R.id.opt2){
             showLayout(false, logMainActivity);
             showLayout(true, statusMessenger);
+            changeStatus = new ChangeStatus();
+            changeStatus.execute((Void) null);
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -145,14 +146,21 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(final Boolean success) {
             changeStatus = null;
-            showProgress(false);
             Log.i(statusMessenger, "row updated");
+            String[] status = new String[]{"Disponible", "1 pedido asignado", "2 pedidos asignados", "3+ pedidos asignados",
+                                            "Formado para pagar", "En camino a entrega", "Inactivo 10 minutos",
+                                            "Inactivo 15 minutos", "Inactivo 20 minutos", "Inactivo 30+ minutos",
+                                            "Accidente de tránsito", "Incidente con el usuario", "Desconectado"};
+            //cmbStatusMessenger
+            adaptador = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_spinner_item, status);
+            adaptador.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            cmbStatusMessenger.setAdapter(adaptador);
+            cmbStatusMessenger.setSelection(4);
         }
 
         @Override
         protected void onCancelled() {
             changeStatus = null;
-            showProgress(false);
         }
     }
 
