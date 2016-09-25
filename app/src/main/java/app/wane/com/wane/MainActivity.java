@@ -13,12 +13,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import app.wane.com.dao.CatLastStatusSQLiteHelper;
 import app.wane.com.model.User;
 import app.wane.com.request.UserRequest;
 import app.wane.com.soport.TokenRest;
@@ -34,12 +35,19 @@ public class MainActivity extends AppCompatActivity {
     private ArrayAdapter<String> adaptador;
     private Spinner cmbOpciones;
     private Intent intent;
+    private ListView listaPurchase;
 
     private Spinner cmbStatusMessenger;
     private Button btnSaveStatusMessenger;
     private ChangeStatus changeStatus;
     private RelativeLayout contetStatusMessenger;
     private RelativeLayout contetFormMain;
+
+    //logout
+    private LogOut logOut;
+
+    // other
+    private Toast msg;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,12 +56,13 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         datos = new String[]{"Elem1","Elem2","Elem3","Elem4","Elem5"};
-        cmbOpciones = (Spinner)findViewById(R.id.CmbOpciones);
         mProgressView = findViewById(R.id.activity_progress);
         cmbStatusMessenger = (Spinner) findViewById(R.id.cmbStatusMessenger);
         btnSaveStatusMessenger = (Button) findViewById(R.id.btnSaveStatusMessenger);
         contetStatusMessenger = (RelativeLayout) findViewById(R.id.content_status_messenger);
         contetFormMain = (RelativeLayout) findViewById(R.id.content_form_main);
+        listaPurchase = (ListView) findViewById(R.id.listView);
+
         try {
             ObjectMapper mp = new ObjectMapper();
             UserRequest userRequest = new UserRequest("log-in", "request", "messenger", TokenRest.val, "log-in", new User("admin", "admin"));
@@ -104,16 +113,49 @@ public class MainActivity extends AppCompatActivity {
             attemptStatusMesenger();
             return true;
         }
+        else if(id == R.id.opt3){
+            logOut();
+            return true;
+        }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void logOut(){
+        logOut = new LogOut();
+        logOut.execute((Void) null);
     }
 
     public void attemptStatusMesenger(){
         showLayout(false, logMainActivity);
         //open conecction
-        CatLastStatusSQLiteHelper sm = new CatLastStatusSQLiteHelper(MainActivity.this, null);
+        //CatLastStatusSQLiteHelper sm = new CatLastStatusSQLiteHelper(MainActivity.this, null);
         changeStatus = new ChangeStatus();
         changeStatus.execute((Void) null);
         showLayout(true, statusMessenger);
+    }
+
+    public class LogOut extends AsyncTask<Void, Void, Boolean>{
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            //request logout rest service
+            Log.i(logMainActivity, "log out");
+            return true;
+        }
+
+        @Override
+        protected void onPostExecute(final Boolean success) {
+            if(success){
+                finish();
+            }else{
+                msg = Toast.makeText(MainActivity.this, "ERROR to logout", Toast.LENGTH_LONG);
+                msg.show();
+            }
+        }
+
+        @Override
+        protected void onCancelled() {
+            logOut = null;
+        }
     }
 
     public class Pedidos extends AsyncTask<Void, Void, Boolean> {
@@ -128,11 +170,8 @@ public class MainActivity extends AppCompatActivity {
         protected void onPostExecute(final Boolean success) {
             pedidos = null;
             showProgress(false);
-
             adaptador = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_spinner_item, datos);
-            adaptador.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            cmbOpciones.setAdapter(adaptador);
-
+            listaPurchase.setAdapter(adaptador);
         }
 
         @Override

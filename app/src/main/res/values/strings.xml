@@ -35,7 +35,7 @@
     <string name="title_activity_main">MainActivity</string>
     <string name="menu_main_activity_opt1">Refresh</string>
     <string name="menu_main_activity_opt2">opt 2</string>
-    <string name="menu_main_activity_opt3">opt 3</string>
+    <string name="menu_main_activity_opt3">Logout</string>
     <!-- status messenger -->
     <string name="status_messenger_btn_save">MainActivity</string>
 </resources>
