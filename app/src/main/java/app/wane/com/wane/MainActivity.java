@@ -18,6 +18,7 @@ import android.widget.Spinner;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import app.wane.com.dao.CatLastStatusSQLiteHelper;
 import app.wane.com.model.User;
 import app.wane.com.request.UserRequest;
 import app.wane.com.soport.TokenRest;
@@ -100,13 +101,19 @@ public class MainActivity extends AppCompatActivity {
             pedidos.execute((Void) null);
             return true;
         }else if(id == R.id.opt2){
-            showLayout(false, logMainActivity);
-            showLayout(true, statusMessenger);
-            changeStatus = new ChangeStatus();
-            changeStatus.execute((Void) null);
+            attemptStatusMesenger();
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void attemptStatusMesenger(){
+        showLayout(false, logMainActivity);
+        //open conecction
+        CatLastStatusSQLiteHelper sm = new CatLastStatusSQLiteHelper(MainActivity.this, null);
+        changeStatus = new ChangeStatus();
+        changeStatus.execute((Void) null);
+        showLayout(true, statusMessenger);
     }
 
     public class Pedidos extends AsyncTask<Void, Void, Boolean> {

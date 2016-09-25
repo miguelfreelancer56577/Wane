@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,16 +16,16 @@ import static app.wane.com.soport.DataBase.*;
  * Created by mangelt on 24/09/2016.
  */
 public class CatLastStatusSQLiteHelper extends SQLiteOpenHelper {
-    final String sqlCreate;
+    private final String sqlCreate = "CREATE TABLE catlaststatus ( nIdLastStatus SMALLINT(11) NOT NULL, sLastStatus CHAR(45) NOT NULL, sDescription CHAR(200) NULL,   PRIMARY KEY (nIdLastStatus))";
+    private final String log = "CatLastStatusSQL";
     public CatLastStatusSQLiteHelper(Context contexto, CursorFactory factory) {
         super(contexto, NAMEBD, factory, VERSION);
-        //query builder
-        sqlCreate = "CREATE TABLE catlaststatus ( nIdLastStatus SMALLINT(11) NOT NULL, sLastStatus CHAR(45) NOT NULL, sDescription CHAR(200) NULL,   PRIMARY KEY (nIdLastStatus))";
     }
     @Override
     public void onCreate(SQLiteDatabase db) {
         //execute query builder
         db.execSQL(sqlCreate);
+        Log.i(log, "created data base");
         //rows
         List<CatLastStatus> status = new ArrayList<CatLastStatus>();
         status.add(new CatLastStatus(1, "Disponible", ""));
@@ -44,8 +45,10 @@ public class CatLastStatusSQLiteHelper extends SQLiteOpenHelper {
             //insert rows
             db.execSQL("INSERT INTO cat_laststatus(nIdLastStatus, sLastStatus, sDescription) VALUES ("+item.getnIdLastStatus()+", '"+item.getsLastStatus()+"', '"+item.getsDescription()+"');");
         }
+        Log.i(log, "inserted all rows");
         //close conecction
         db.close();
+        Log.i(log, "close conecction");
     }
     @Override
     public void onUpgrade(SQLiteDatabase db, int versionAnterior, int versionNueva) {
