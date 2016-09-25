@@ -1,5 +1,6 @@
 package app.wane.com.wane;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -21,14 +22,14 @@ import app.wane.com.soport.TokenRest;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final String logMainActivity = "MAIN_ACTIVITY--->";
+    private static final String logMainActivity = "MAIN_ACTIVITY";
 
     private View mProgressView;
     private Pedidos pedidos;
     private String[] datos;
     private ArrayAdapter<String> adaptador;
     private Spinner cmbOpciones;
-    private MainActivity mainActivity;
+    private Intent intent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,8 +39,8 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         datos = new String[]{"Elem1","Elem2","Elem3","Elem4","Elem5"};
         cmbOpciones = (Spinner)findViewById(R.id.CmbOpciones);
-        mainActivity = this;
         mProgressView = findViewById(R.id.activity_progress);
+        Log.i(logMainActivity, "start activity main");
 
         try {
             ObjectMapper mp = new ObjectMapper();
@@ -78,7 +79,9 @@ public class MainActivity extends AppCompatActivity {
             pedidos.execute((Void) null);
             return true;
         }else if(id == R.id.opt2){
+            intent = new Intent(MainActivity.this, StatusMessenger.class);
             Log.i(logMainActivity, "opt 2");
+            startActivity(intent);
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -97,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
             pedidos = null;
             showProgress(false);
 
-            adaptador = new ArrayAdapter<String>(mainActivity,android.R.layout.simple_spinner_item, datos);
+            adaptador = new ArrayAdapter<String>(MainActivity.this,android.R.layout.simple_spinner_item, datos);
             adaptador.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             cmbOpciones.setAdapter(adaptador);
 

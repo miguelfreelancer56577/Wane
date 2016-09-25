@@ -3,6 +3,16 @@
 
     <!-- name activities -->
     <string name="activity_main">Purchase Orders</string>
+    <string name="status_messenger">Status Messenger</string>
+
+    <!-- commons -->
+    <string name="commons_btn_save">Save</string>
+    <string name="commons_btn_delete">Delete</string>
+    <string name="commons_btn_update">Update</string>
+    <string name="commons_btn_create">Create</string>
+    <string name="commons_btn_insert">Insert</string>
+    <string name="commons_btn_add">Add</string>
+    <string name="commons_btn_register">Register</string>
 
     <!-- Strings related to login -->
     <string name="prompt_user">User</string>
@@ -21,8 +31,11 @@
     <string name="msg_error_login_user">User required</string>
     <string name="msg_error_login_password_incorrect">This password is incorrect</string>
     <string name="msg_error_login_user_incorrect">This user is incorrect</string>
+    <!-- main activity -->
     <string name="title_activity_main">MainActivity</string>
     <string name="menu_main_activity_opt1">Refresh</string>
     <string name="menu_main_activity_opt2">opt 2</string>
     <string name="menu_main_activity_opt3">opt 3</string>
+    <!-- status messenger -->
+    <string name="status_messenger_btn_save">MainActivity</string>
 </resources>

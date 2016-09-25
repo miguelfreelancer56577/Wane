@@ -21,7 +21,7 @@ import android.widget.Toast;
  */
 public class LoginActivity extends AppCompatActivity {
 
-    private static final String logLogin = "LOGIN--->";
+    private static final String logLogin = "LOGIN";
 
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
