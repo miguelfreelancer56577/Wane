@@ -27,10 +27,6 @@
             android:name=".MainActivity"
             android:label="@string/activity_main"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".StatusMessenger"
-            android:label="@string/status_messenger"
-            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>

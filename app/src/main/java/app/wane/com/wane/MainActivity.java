@@ -12,6 +12,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -23,6 +25,7 @@ import app.wane.com.soport.TokenRest;
 public class MainActivity extends AppCompatActivity {
 
     private static final String logMainActivity = "MAIN_ACTIVITY";
+    private static final String statusMessenger = "STATUS_MESSENGER";
 
     private View mProgressView;
     private Pedidos pedidos;
@@ -30,6 +33,12 @@ public class MainActivity extends AppCompatActivity {
     private ArrayAdapter<String> adaptador;
     private Spinner cmbOpciones;
     private Intent intent;
+
+    private Spinner cmbStatusMessenger;
+    private Button btnSaveStatusMessenger;
+    private ChangeStatus changeStatus;
+    private RelativeLayout contetStatusMessenger;
+    private RelativeLayout contetFormMain;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,8 +49,10 @@ public class MainActivity extends AppCompatActivity {
         datos = new String[]{"Elem1","Elem2","Elem3","Elem4","Elem5"};
         cmbOpciones = (Spinner)findViewById(R.id.CmbOpciones);
         mProgressView = findViewById(R.id.activity_progress);
-        Log.i(logMainActivity, "start activity main");
-
+        cmbStatusMessenger = (Spinner) findViewById(R.id.cmbStatusMessenger);
+        btnSaveStatusMessenger = (Button) findViewById(R.id.btnSaveStatusMessenger);
+        contetStatusMessenger = (RelativeLayout) findViewById(R.id.content_status_messenger);
+        contetFormMain = (RelativeLayout) findViewById(R.id.content_form_main);
         try {
             ObjectMapper mp = new ObjectMapper();
             UserRequest userRequest = new UserRequest("log-in", "request", "messenger", TokenRest.val, "log-in", new User("admin", "admin"));
@@ -59,6 +70,15 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        btnSaveStatusMessenger.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showProgress(true);
+                changeStatus = new ChangeStatus();
+                changeStatus.execute((Void) null);
+            }
+        });
+
     }
 
     @Override
@@ -73,15 +93,16 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
         if (id == R.id.opt1) {
             Log.i(logMainActivity, "opt 1");
+            showLayout(false, statusMessenger);
+            showLayout(true, logMainActivity);
             //get pedidos
             showProgress(true);
             pedidos = new Pedidos();
             pedidos.execute((Void) null);
             return true;
         }else if(id == R.id.opt2){
-            intent = new Intent(MainActivity.this, StatusMessenger.class);
-            Log.i(logMainActivity, "opt 2");
-            startActivity(intent);
+            showLayout(false, logMainActivity);
+            showLayout(true, statusMessenger);
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -100,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
             pedidos = null;
             showProgress(false);
 
-            adaptador = new ArrayAdapter<String>(MainActivity.this,android.R.layout.simple_spinner_item, datos);
+            adaptador = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_spinner_item, datos);
             adaptador.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             cmbOpciones.setAdapter(adaptador);
 
@@ -113,8 +134,38 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public class ChangeStatus extends AsyncTask<Void, Void, Boolean> {
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            Log.i(statusMessenger, "requesting");
+            return true;
+        }
+
+        @Override
+        protected void onPostExecute(final Boolean success) {
+            changeStatus = null;
+            showProgress(false);
+            Log.i(statusMessenger, "row updated");
+        }
+
+        @Override
+        protected void onCancelled() {
+            changeStatus = null;
+            showProgress(false);
+        }
+    }
+
     private void showProgress(final boolean show) {
         mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+    }
+
+    private void showLayout(final boolean show, final String nameLayout){
+        if(nameLayout.equals(logMainActivity)){
+            contetFormMain.setVisibility(show ? View.VISIBLE : View.GONE);
+        }else if(nameLayout.equals(statusMessenger)){
+            contetStatusMessenger.setVisibility(show ? View.VISIBLE : View.GONE);
+        }
     }
 
 }
