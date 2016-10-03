@@ -2,16 +2,16 @@ package app.wane.com.soport;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.io.Serializable;
+
 /**
  * Created by Maricruz on 23/09/2016.
  */
-public class HeaderResponse {
+public class HeaderResponse  implements Serializable {
     @JsonProperty("service")
     protected String service;
     @JsonProperty("type")
     protected String type;
-    @JsonProperty("device")
-    protected String device;
     @JsonProperty("token")
     protected String token;
     @JsonProperty("option")
@@ -19,19 +19,11 @@ public class HeaderResponse {
     @JsonProperty("result")
     protected String result;
 
-    public HeaderResponse(String service, String type, String device, String token, String option) {
+    public HeaderResponse(String service, String type, String token, String option, String result) {
         this.service = service;
         this.type = type;
-        this.device = device;
         this.token = token;
         this.option = option;
-    }
-
-    public String getResult() {
-        return result;
-    }
-
-    public void setResult(String result) {
         this.result = result;
     }
 
@@ -51,14 +43,6 @@ public class HeaderResponse {
         this.type = type;
     }
 
-    public String getDevice() {
-        return device;
-    }
-
-    public void setDevice(String device) {
-        this.device = device;
-    }
-
     public String getToken() {
         return token;
     }
@@ -75,39 +59,47 @@ public class HeaderResponse {
         this.option = option;
     }
 
+    public String getResult() {
+        return result;
+    }
+
+    public void setResult(String result) {
+        this.result = result;
+    }
+
+    @Override
+    public String toString() {
+        return "HeaderResponse{" +
+                "service='" + service + '\'' +
+                ", type='" + type + '\'' +
+                ", token='" + token + '\'' +
+                ", option='" + option + '\'' +
+                ", result='" + result + '\'' +
+                '}';
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof HeaderResponse)) return false;
 
-        HeaderResponse header = (HeaderResponse) o;
+        HeaderResponse that = (HeaderResponse) o;
 
-        if (!getService().equals(header.getService())) return false;
-        if (!getType().equals(header.getType())) return false;
-        if (!getDevice().equals(header.getDevice())) return false;
-        if (!getToken().equals(header.getToken())) return false;
-        return getOption().equals(header.getOption());
+        if (service != null ? !service.equals(that.service) : that.service != null) return false;
+        if (type != null ? !type.equals(that.type) : that.type != null) return false;
+        if (token != null ? !token.equals(that.token) : that.token != null) return false;
+        if (option != null ? !option.equals(that.option) : that.option != null) return false;
+        return !(result != null ? !result.equals(that.result) : that.result != null);
 
     }
 
     @Override
     public int hashCode() {
-        int result = getService().hashCode();
-        result = 31 * result + getType().hashCode();
-        result = 31 * result + getDevice().hashCode();
-        result = 31 * result + getToken().hashCode();
-        result = 31 * result + getOption().hashCode();
-        return result;
-    }
-
-    @Override
-    public String toString() {
-        return "Header{" +
-                "service='" + service + '\'' +
-                ", type='" + type + '\'' +
-                ", device='" + device + '\'' +
-                ", token='" + token + '\'' +
-                ", option='" + option + '\'' +
-                '}';
+        int result1 = service != null ? service.hashCode() : 0;
+        result1 = 31 * result1 + (type != null ? type.hashCode() : 0);
+        result1 = 31 * result1 + (token != null ? token.hashCode() : 0);
+        result1 = 31 * result1 + (option != null ? option.hashCode() : 0);
+        result1 = 31 * result1 + (result != null ? result.hashCode() : 0);
+        return result1;
     }
 }

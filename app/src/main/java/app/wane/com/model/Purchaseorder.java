@@ -1,182 +1,112 @@
 package app.wane.com.model;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.Date;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.io.Serializable;
 
 /**
  * Created by mangelt on 21/09/2016.
  */
-public class Purchaseorder {
-    private Long nidpurchaseorder;
-    private CatPaymenttype catPaymenttype;
-    private int nidclient;
-    private int nidmessenger;
-    private int niddeliveryaddress;
-    private Short deta;
-    private boolean binvoiced;
-    private boolean bisterminalpayment;
-    private Date dlastupdate;
-    private Integer nidstatus;
-    private String sinvoiceid;
-    private Set<Purchaseorderdetail> purchaseorderdetails = new HashSet<Purchaseorderdetail>(0);
+public class PurchaseOrder implements Serializable {
 
-    public Long getNidpurchaseorder() {
-        return nidpurchaseorder;
+    @JsonProperty("poid")
+    private int poid;
+    @JsonProperty("statusString")
+    private String statusString;
+    @JsonProperty("deliverydate")
+    private String deliverydate;
+    @JsonProperty("deliveryaddress")
+    private String deliveryaddress;
+    @JsonProperty("mapurl")
+    private String mapurl;
+
+    public PurchaseOrder() {
     }
 
-    public void setNidpurchaseorder(Long nidpurchaseorder) {
-        this.nidpurchaseorder = nidpurchaseorder;
+    public PurchaseOrder(int poid, String statusString, String deliverydate, String deliveryaddress, String mapurl) {
+        this.poid = poid;
+        this.statusString = statusString;
+        this.deliverydate = deliverydate;
+        this.deliveryaddress = deliveryaddress;
+        this.mapurl = mapurl;
     }
 
-    public CatPaymenttype getCatPaymenttype() {
-        return catPaymenttype;
+    public int getPoid() {
+        return poid;
     }
 
-    public void setCatPaymenttype(CatPaymenttype catPaymenttype) {
-        this.catPaymenttype = catPaymenttype;
+    public void setPoid(int poid) {
+        this.poid = poid;
     }
 
-    public int getNidclient() {
-        return nidclient;
+    public String getStatusString() {
+        return statusString;
     }
 
-    public void setNidclient(int nidclient) {
-        this.nidclient = nidclient;
+    public void setStatusString(String statusString) {
+        this.statusString = statusString;
     }
 
-    public int getNidmessenger() {
-        return nidmessenger;
+    public String getDeliverydate() {
+        return deliverydate;
     }
 
-    public void setNidmessenger(int nidmessenger) {
-        this.nidmessenger = nidmessenger;
+    public void setDeliverydate(String deliverydate) {
+        this.deliverydate = deliverydate;
     }
 
-    public int getNiddeliveryaddress() {
-        return niddeliveryaddress;
+    public String getDeliveryaddress() {
+        return deliveryaddress;
     }
 
-    public void setNiddeliveryaddress(int niddeliveryaddress) {
-        this.niddeliveryaddress = niddeliveryaddress;
+    public void setDeliveryaddress(String deliveryaddress) {
+        this.deliveryaddress = deliveryaddress;
     }
 
-    public Short getDeta() {
-        return deta;
+    public String getMapurl() {
+        return mapurl;
     }
 
-    public void setDeta(Short deta) {
-        this.deta = deta;
+    public void setMapurl(String mapurl) {
+        this.mapurl = mapurl;
     }
 
-    public boolean isBinvoiced() {
-        return binvoiced;
-    }
-
-    public void setBinvoiced(boolean binvoiced) {
-        this.binvoiced = binvoiced;
-    }
-
-    public boolean isBisterminalpayment() {
-        return bisterminalpayment;
-    }
-
-    public void setBisterminalpayment(boolean bisterminalpayment) {
-        this.bisterminalpayment = bisterminalpayment;
-    }
-
-    public Date getDlastupdate() {
-        return dlastupdate;
-    }
-
-    public void setDlastupdate(Date dlastupdate) {
-        this.dlastupdate = dlastupdate;
-    }
-
-    public Integer getNidstatus() {
-        return nidstatus;
-    }
-
-    public void setNidstatus(Integer nidstatus) {
-        this.nidstatus = nidstatus;
-    }
-
-    public String getSinvoiceid() {
-        return sinvoiceid;
-    }
-
-    public void setSinvoiceid(String sinvoiceid) {
-        this.sinvoiceid = sinvoiceid;
-    }
-
-    public Set<Purchaseorderdetail> getPurchaseorderdetails() {
-        return purchaseorderdetails;
-    }
-
-    public void setPurchaseorderdetails(Set<Purchaseorderdetail> purchaseorderdetails) {
-        this.purchaseorderdetails = purchaseorderdetails;
+    @Override
+    public String toString() {
+        return "PurchaseOrder{" +
+                "poid=" + poid +
+                ", statusString='" + statusString + '\'' +
+                ", deliverydate='" + deliverydate + '\'' +
+                ", deliveryaddress='" + deliveryaddress + '\'' +
+                ", mapurl='" + mapurl + '\'' +
+                '}';
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Purchaseorder)) return false;
+        if (!(o instanceof PurchaseOrder)) return false;
 
-        Purchaseorder that = (Purchaseorder) o;
+        PurchaseOrder that = (PurchaseOrder) o;
 
-        if (getNidclient() != that.getNidclient()) return false;
-        if (getNidmessenger() != that.getNidmessenger()) return false;
-        if (getNiddeliveryaddress() != that.getNiddeliveryaddress()) return false;
-        if (isBinvoiced() != that.isBinvoiced()) return false;
-        if (isBisterminalpayment() != that.isBisterminalpayment()) return false;
-        if (getNidpurchaseorder() != null ? !getNidpurchaseorder().equals(that.getNidpurchaseorder()) : that.getNidpurchaseorder() != null)
+        if (poid != that.poid) return false;
+        if (statusString != null ? !statusString.equals(that.statusString) : that.statusString != null)
             return false;
-        if (getCatPaymenttype() != null ? !getCatPaymenttype().equals(that.getCatPaymenttype()) : that.getCatPaymenttype() != null)
+        if (deliverydate != null ? !deliverydate.equals(that.deliverydate) : that.deliverydate != null)
             return false;
-        if (getDeta() != null ? !getDeta().equals(that.getDeta()) : that.getDeta() != null)
+        if (deliveryaddress != null ? !deliveryaddress.equals(that.deliveryaddress) : that.deliveryaddress != null)
             return false;
-        if (getDlastupdate() != null ? !getDlastupdate().equals(that.getDlastupdate()) : that.getDlastupdate() != null)
-            return false;
-        if (getNidstatus() != null ? !getNidstatus().equals(that.getNidstatus()) : that.getNidstatus() != null)
-            return false;
-        if (getSinvoiceid() != null ? !getSinvoiceid().equals(that.getSinvoiceid()) : that.getSinvoiceid() != null)
-            return false;
-        return !(getPurchaseorderdetails() != null ? !getPurchaseorderdetails().equals(that.getPurchaseorderdetails()) : that.getPurchaseorderdetails() != null);
+        return !(mapurl != null ? !mapurl.equals(that.mapurl) : that.mapurl != null);
 
     }
 
     @Override
     public int hashCode() {
-        int result = getNidpurchaseorder() != null ? getNidpurchaseorder().hashCode() : 0;
-        result = 31 * result + (getCatPaymenttype() != null ? getCatPaymenttype().hashCode() : 0);
-        result = 31 * result + getNidclient();
-        result = 31 * result + getNidmessenger();
-        result = 31 * result + getNiddeliveryaddress();
-        result = 31 * result + (getDeta() != null ? getDeta().hashCode() : 0);
-        result = 31 * result + (isBinvoiced() ? 1 : 0);
-        result = 31 * result + (isBisterminalpayment() ? 1 : 0);
-        result = 31 * result + (getDlastupdate() != null ? getDlastupdate().hashCode() : 0);
-        result = 31 * result + (getNidstatus() != null ? getNidstatus().hashCode() : 0);
-        result = 31 * result + (getSinvoiceid() != null ? getSinvoiceid().hashCode() : 0);
-        result = 31 * result + (getPurchaseorderdetails() != null ? getPurchaseorderdetails().hashCode() : 0);
+        int result = poid;
+        result = 31 * result + (statusString != null ? statusString.hashCode() : 0);
+        result = 31 * result + (deliverydate != null ? deliverydate.hashCode() : 0);
+        result = 31 * result + (deliveryaddress != null ? deliveryaddress.hashCode() : 0);
+        result = 31 * result + (mapurl != null ? mapurl.hashCode() : 0);
         return result;
-    }
-
-    @Override
-    public String toString() {
-        return "Purchaseorder{" +
-                "nidpurchaseorder=" + nidpurchaseorder +
-                ", catPaymenttype=" + catPaymenttype +
-                ", nidclient=" + nidclient +
-                ", nidmessenger=" + nidmessenger +
-                ", niddeliveryaddress=" + niddeliveryaddress +
-                ", deta=" + deta +
-                ", binvoiced=" + binvoiced +
-                ", bisterminalpayment=" + bisterminalpayment +
-                ", dlastupdate=" + dlastupdate +
-                ", nidstatus=" + nidstatus +
-                ", sinvoiceid='" + sinvoiceid + '\'' +
-                ", purchaseorderdetails=" + purchaseorderdetails +
-                '}';
     }
 }

@@ -1,10 +1,17 @@
 package app.wane.com.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.io.Serializable;
+
 /**
  * Created by mangelt on 23/09/2016.
  */
-public class User {
+public class User implements Serializable {
+
+    @JsonProperty("username")
     private String username;
+    @JsonProperty("password")
     private String password;
 
     public User(String username, String password) {

@@ -2,66 +2,70 @@ package app.wane.com.soport;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.io.Serializable;
+
 /**
- * Created by Maricruz on 23/09/2016.
+ * Created by mangelt on 23/09/2016.
  */
-public class HeaderRequest {
+public class HeaderRequest implements Serializable {
     @JsonProperty("service")
     protected String service;
     @JsonProperty("type")
     protected String type;
-    @JsonProperty("device")
-    protected String device;
     @JsonProperty("token")
     protected String token;
     @JsonProperty("option")
     protected String option;
+    @JsonProperty("parameter")
+    protected String parameter;
 
-    public HeaderRequest(String service, String type, String device, String token, String option) {
-        this.service = service;
-        this.type = type;
-        this.device = device;
-        this.token = token;
+    private HeaderRequest(){
+        this.service = "messenger";
+        this.type = "request";
+        this.token = TokenRest.val;
+        this.parameter = "";
+    }
+
+    public HeaderRequest(String option) {
+        this();
         this.option = option;
     }
 
-    public String getService() {
+    public HeaderRequest(String option, String parameter) {
+        this();
+        this.option = option;
+        this.parameter = parameter;
+    }
 
+    public String getParameter() {
+        return parameter;
+    }
+
+    public void setParameter(String parameter) {
+        this.parameter = parameter;
+    }
+
+    public String getService() {
         return service;
     }
 
     public void setService(String service) {
-
         this.service = service;
     }
 
     public String getType() {
-
         return type;
     }
 
     public void setType(String type) {
-
         this.type = type;
     }
 
-    public String getDevice() {
-
-        return device;
-    }
-
-    public void setDevice(String device) {
-
-        this.device = device;
-    }
-
     public String getToken() {
-
         return token;
     }
 
     public void setToken(String token) {
-
         this.token = token;
     }
 
@@ -70,8 +74,17 @@ public class HeaderRequest {
     }
 
     public void setOption(String option) {
-
         this.option = option;
+    }
+
+    @Override
+    public String toString() {
+        return "HeaderRequest{" +
+                "service='" + service + '\'' +
+                ", type='" + type + '\'' +
+                ", token='" + token + '\'' +
+                ", option='" + option + '\'' +
+                '}';
     }
 
     @Override
@@ -79,35 +92,21 @@ public class HeaderRequest {
         if (this == o) return true;
         if (!(o instanceof HeaderRequest)) return false;
 
-        HeaderRequest header = (HeaderRequest) o;
+        HeaderRequest that = (HeaderRequest) o;
 
-        if (!getService().equals(header.getService())) return false;
-        if (!getType().equals(header.getType())) return false;
-        if (!getDevice().equals(header.getDevice())) return false;
-        if (!getToken().equals(header.getToken())) return false;
-        return getOption().equals(header.getOption());
+        if (service != null ? !service.equals(that.service) : that.service != null) return false;
+        if (type != null ? !type.equals(that.type) : that.type != null) return false;
+        if (token != null ? !token.equals(that.token) : that.token != null) return false;
+        return !(option != null ? !option.equals(that.option) : that.option != null);
 
     }
 
     @Override
     public int hashCode() {
-        int result = getService().hashCode();
-        result = 31 * result + getType().hashCode();
-        result = 31 * result + getDevice().hashCode();
-        result = 31 * result + getToken().hashCode();
-        result = 31 * result + getOption().hashCode();
+        int result = service != null ? service.hashCode() : 0;
+        result = 31 * result + (type != null ? type.hashCode() : 0);
+        result = 31 * result + (token != null ? token.hashCode() : 0);
+        result = 31 * result + (option != null ? option.hashCode() : 0);
         return result;
     }
-
-    @Override
-    public String toString() {
-        return "Header{" +
-                "service='" + service + '\'' +
-                ", type='" + type + '\'' +
-                ", device='" + device + '\'' +
-                ", token='" + token + '\'' +
-                ", option='" + option + '\'' +
-                '}';
-    }
-
 }

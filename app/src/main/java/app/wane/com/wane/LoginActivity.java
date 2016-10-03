@@ -16,6 +16,15 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import app.wane.com.model.PurchaseOrder;
+import app.wane.com.response.ListPurchaseOrder;
+
 /**
  * A login screen that offers login via email/password.
  */
@@ -34,6 +43,9 @@ public class LoginActivity extends AppCompatActivity {
     private View mProgressView;
     private View mLoginFormView;
     private Intent intent;
+
+    //util
+    ObjectMapper mp = new ObjectMapper();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +66,19 @@ public class LoginActivity extends AppCompatActivity {
                 attemptLogin();
             }
         });
+
+        List<PurchaseOrder> listPurchaseOrderList = new ArrayList<>();
+        listPurchaseOrderList.add(new PurchaseOrder(123456, "Asignado", "2016-09-29 18:10:00", "Tamaulipas 13, Condesa, 34567, Cuauhtémoc, D.F.", "https://maps.google.com.mx?latitude=19.383&longitude=-99.188374" ));
+        listPurchaseOrderList.add(new PurchaseOrder(123457, "Asignado", "2016-09-29 23:10:00", "Benito Juarez num. 16", "https://maps.google.com.mx?latitude=19.383&longitude=-99.188374" ));
+
+        ListPurchaseOrder listPurchaseOrder = new ListPurchaseOrder("messenger", "request", "w916i68n94e", "po", "success", 2, null);
+
+        try {
+            Log.i("json", mp.writeValueAsString(listPurchaseOrder));
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
 
     }
 
