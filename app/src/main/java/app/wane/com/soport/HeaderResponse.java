@@ -7,7 +7,7 @@ import java.io.Serializable;
 /**
  * Created by Maricruz on 23/09/2016.
  */
-public class HeaderResponse  implements Serializable {
+public class HeaderResponse implements Serializable {
     @JsonProperty("service")
     protected String service;
     @JsonProperty("type")
@@ -18,6 +18,9 @@ public class HeaderResponse  implements Serializable {
     protected String option;
     @JsonProperty("result")
     protected String result;
+
+    public HeaderResponse() {
+    }
 
     public HeaderResponse(String service, String type, String token, String option, String result) {
         this.service = service;

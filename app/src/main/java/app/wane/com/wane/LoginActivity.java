@@ -19,18 +19,30 @@ import android.widget.Toast;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.StringHttpMessageConverter;
+import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.RestTemplate;
 
-import app.wane.com.model.PurchaseOrder;
-import app.wane.com.response.ListPurchaseOrder;
+import java.io.IOException;
+
+import app.wane.com.model.User;
+import app.wane.com.request.Messenger;
+import app.wane.com.soport.HeaderResponse;
+import app.wane.com.soport.TokenRest;
+
+import static app.wane.com.soport.ApiService.requestHeaders;
+import static app.wane.com.soport.ApiService.uriLogin;
 
 /**
  * A login screen that offers login via email/password.
  */
 public class LoginActivity extends AppCompatActivity {
 
-    private static final String logLogin = "LOGIN";
+    private static final String logLogin = LoginActivity.class.getName();
 
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
@@ -66,20 +78,6 @@ public class LoginActivity extends AppCompatActivity {
                 attemptLogin();
             }
         });
-
-        List<PurchaseOrder> listPurchaseOrderList = new ArrayList<>();
-        listPurchaseOrderList.add(new PurchaseOrder(123456, "Asignado", "2016-09-29 18:10:00", "Tamaulipas 13, Condesa, 34567, Cuauhtémoc, D.F.", "https://maps.google.com.mx?latitude=19.383&longitude=-99.188374" ));
-        listPurchaseOrderList.add(new PurchaseOrder(123457, "Asignado", "2016-09-29 23:10:00", "Benito Juarez num. 16", "https://maps.google.com.mx?latitude=19.383&longitude=-99.188374" ));
-
-        ListPurchaseOrder listPurchaseOrder = new ListPurchaseOrder("messenger", "request", "w916i68n94e", "po", "success", 2, null);
-
-        try {
-            Log.i("json", mp.writeValueAsString(listPurchaseOrder));
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-
-
     }
 
     /**
@@ -183,17 +181,41 @@ public class LoginActivity extends AppCompatActivity {
         @Override
         protected Boolean doInBackground(Void... params) {
             // TODO: attempt authentication against a network service.
-            if(mUser.equals("admin") && mPassword.equals("admin")){
+            RestTemplate restTemplate = new RestTemplate();
+            restTemplate.getMessageConverters().add(new StringHttpMessageConverter());
+            Messenger messenger = new Messenger("login", new User(mUser, mPassword));
+            ObjectMapper mp = new ObjectMapper();
+            try {
+                HttpEntity<String> requestEntity = new HttpEntity<String>("data="+mp.writeValueAsString(messenger), requestHeaders());
+                ResponseEntity<String> response = restTemplate.exchange(uriLogin, HttpMethod.POST, requestEntity, String.class, requestEntity);
+                Log.i(logLogin, "reponse of service json"+ response.getBody());
+                if(response.getStatusCode() != HttpStatus.OK){
+                    throw new HttpServerErrorException( response.getStatusCode());
+                }else{
+                    HeaderResponse headerResponse = mp.readValue(response.getBody(), HeaderResponse.class);
+                    if(headerResponse.getResult().equals("success")){
+                        TokenRest.val = headerResponse.getToken();
+                        return true;
+                    }
+                }
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+                return false;
+            } catch (IOException e) {
+                e.printStackTrace();
+                return false;
+            }
+            /*if(mUser.equals("admin") && mPassword.equals("admin")){
                 return true;
             }else{
                 return false;
-            }
+            }*/
+            return false;
         }
 
         @Override
         protected void onPostExecute(final Boolean success) {
             mAuthTask = null;
-            showProgress(false);
             Toast msg;
 
             if (success) {
@@ -217,6 +239,7 @@ public class LoginActivity extends AppCompatActivity {
             //clear form login
             mPasswordView.setText("");
             mUserView.setText("");
+            showProgress(false);
         }
 
         @Override
