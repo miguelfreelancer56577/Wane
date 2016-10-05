@@ -205,11 +205,6 @@ public class LoginActivity extends AppCompatActivity {
                 e.printStackTrace();
                 return false;
             }
-            /*if(mUser.equals("admin") && mPassword.equals("admin")){
-                return true;
-            }else{
-                return false;
-            }*/
             return false;
         }
 
@@ -219,7 +214,6 @@ public class LoginActivity extends AppCompatActivity {
             Toast msg;
 
             if (success) {
-                //finish();
                 Log.i(logLogin, "Correct credentials .......");
                 intent = new Intent(LoginActivity.this, MainActivity.class);
                 startActivity(intent);

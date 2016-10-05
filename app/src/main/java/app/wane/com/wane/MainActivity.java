@@ -18,13 +18,33 @@ import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.StringHttpMessageConverter;
+import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.RestTemplate;
+
+import java.io.IOException;
+
+import app.wane.com.soport.HeaderRequest;
+import app.wane.com.soport.HeaderResponse;
+import app.wane.com.soport.TokenRest;
+
+import static app.wane.com.soport.ApiService.requestHeaders;
+import static app.wane.com.soport.ApiService.uriLogout;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String logMainActivity = "MAIN_ACTIVITY";
     private static final String statusMessenger = "STATUS_MESSENGER";
+    private static final String logLogout = "logLogout";
 
+    //components of view
     private View mProgressView;
     private Pedidos pedidos;
     private String[] datos;
@@ -44,6 +64,11 @@ public class MainActivity extends AppCompatActivity {
 
     // other
     private Toast msg;
+    //api to rest service
+    private RestTemplate restTemplate = new RestTemplate();
+    //object to mapper json
+    ObjectMapper mp = new ObjectMapper();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -134,13 +159,34 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected Boolean doInBackground(Void... params) {
             //request logout rest service
-            Log.i(logMainActivity, "log out");
+            restTemplate.getMessageConverters().add(new StringHttpMessageConverter());
+            HeaderRequest headerRequest = new HeaderRequest("logout");
+            try {
+                HttpEntity<String> requestEntity = new HttpEntity<String>("data="+mp.writeValueAsString(headerRequest), requestHeaders());
+                ResponseEntity<String> response = restTemplate.exchange(uriLogout, HttpMethod.POST, requestEntity, String.class, requestEntity);
+                Log.d(logLogout, "reponse of service json"+ response.getBody());
+                if(response.getStatusCode() != HttpStatus.OK){
+                    throw new HttpServerErrorException( response.getStatusCode());
+                }else{
+                    HeaderResponse headerResponse = mp.readValue(response.getBody(), HeaderResponse.class);
+                    if(headerResponse.getResult().equals("success")){
+                        return true;
+                    }
+                }
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+                return false;
+            } catch (IOException e) {
+                e.printStackTrace();
+                return false;
+            }
             return true;
         }
 
         @Override
         protected void onPostExecute(final Boolean success) {
             if(success){
+                TokenRest.val = "0";
                 finish();
             }else{
                 msg = Toast.makeText(MainActivity.this, "ERROR to logout", Toast.LENGTH_LONG);
