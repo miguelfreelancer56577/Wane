@@ -13,23 +13,22 @@ import app.wane.com.soport.HeaderResponse;
 public class ListCatPurchaseStatus extends HeaderResponse {
 
     @JsonProperty("postatuscatalog")
-    public Object postatuscatalog;
+    public PoStatusCatalog postatuscatalog;
 
-    public ListCatPurchaseStatus(String service, String type, String token, String option, String result, final int size, final List<CatPurchaseOrder> listCatPurchaseOrder) {
-        super(service, type, token, option, result);
-        this.postatuscatalog = new Object(){
-            @JsonProperty("arraysize")
-            public int arraysize = size;
-            @JsonProperty("array")
-            public List<CatPurchaseOrder> array = listCatPurchaseOrder;
-        };
+    public ListCatPurchaseStatus() {
+
     }
 
-    public Object getPostatuscatalog() {
+    public ListCatPurchaseStatus(String service, String type, String token, String option, String result, final int arraysize, final List<CatPurchaseOrder> array) {
+        super(service, type, token, option, result);
+        postatuscatalog = new PoStatusCatalog(arraysize, array);
+    }
+
+    public PoStatusCatalog getPostatuscatalog() {
         return postatuscatalog;
     }
 
-    public void setPostatuscatalog(Object postatuscatalog) {
+    public void setPostatuscatalog(PoStatusCatalog postatuscatalog) {
         this.postatuscatalog = postatuscatalog;
     }
 
@@ -57,5 +56,64 @@ public class ListCatPurchaseStatus extends HeaderResponse {
         return "ListCatPurchaseStatus{" +
                 "postatuscatalog=" + postatuscatalog +
                 '}';
+    }
+
+    public class PoStatusCatalog {
+
+        @JsonProperty("arraysize")
+        protected int arraysize;
+        @JsonProperty("array")
+        protected List<CatPurchaseOrder> array;
+
+        public PoStatusCatalog() {
+        }
+
+        public PoStatusCatalog(int arraysize, List<CatPurchaseOrder> array) {
+            this.arraysize = arraysize;
+            this.array = array;
+        }
+
+        public int getArraysize() {
+            return arraysize;
+        }
+
+        public void setArraysize(int arraysize) {
+            this.arraysize = arraysize;
+        }
+
+        public List<CatPurchaseOrder> getArray() {
+            return array;
+        }
+
+        public void setArray(List<CatPurchaseOrder> array) {
+            this.array = array;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof PoStatusCatalog)) return false;
+
+            PoStatusCatalog that = (PoStatusCatalog) o;
+
+            if (arraysize != that.arraysize) return false;
+            return !(array != null ? !array.equals(that.array) : that.array != null);
+
+        }
+
+        @Override
+        public int hashCode() {
+            int result = arraysize;
+            result = 31 * result + (array != null ? array.hashCode() : 0);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "PoStatusCatalog{" +
+                    "arraysize=" + arraysize +
+                    ", array=" + array +
+                    '}';
+        }
     }
 }

@@ -38,4 +38,8 @@
     <string name="menu_main_activity_opt3">Logout</string>
     <!-- status messenger -->
     <string name="status_messenger_btn_save">MainActivity</string>
+    <!-- purchase order -->
+    <string name="po_txt_status">Status: </string>
+    <string name="po_txt_deliverydate">Delivery date: </string>
+    <string name="po_txt_deliveryaddress">Delivery Address: </string>
 </resources>

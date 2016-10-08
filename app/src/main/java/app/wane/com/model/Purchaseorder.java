@@ -11,8 +11,8 @@ public class PurchaseOrder implements Serializable {
 
     @JsonProperty("poid")
     private int poid;
-    @JsonProperty("statusString")
-    private String statusString;
+    @JsonProperty("status")
+    private String status;
     @JsonProperty("deliverydate")
     private String deliverydate;
     @JsonProperty("deliveryaddress")
@@ -23,12 +23,20 @@ public class PurchaseOrder implements Serializable {
     public PurchaseOrder() {
     }
 
-    public PurchaseOrder(int poid, String statusString, String deliverydate, String deliveryaddress, String mapurl) {
+    public PurchaseOrder(int poid, String status, String deliverydate, String deliveryaddress, String mapurl) {
         this.poid = poid;
-        this.statusString = statusString;
+        this.status = status;
         this.deliverydate = deliverydate;
         this.deliveryaddress = deliveryaddress;
         this.mapurl = mapurl;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public int getPoid() {
@@ -37,14 +45,6 @@ public class PurchaseOrder implements Serializable {
 
     public void setPoid(int poid) {
         this.poid = poid;
-    }
-
-    public String getStatusString() {
-        return statusString;
-    }
-
-    public void setStatusString(String statusString) {
-        this.statusString = statusString;
     }
 
     public String getDeliverydate() {
@@ -75,7 +75,7 @@ public class PurchaseOrder implements Serializable {
     public String toString() {
         return "PurchaseOrder{" +
                 "poid=" + poid +
-                ", statusString='" + statusString + '\'' +
+                ", status='" + status + '\'' +
                 ", deliverydate='" + deliverydate + '\'' +
                 ", deliveryaddress='" + deliveryaddress + '\'' +
                 ", mapurl='" + mapurl + '\'' +
@@ -89,24 +89,23 @@ public class PurchaseOrder implements Serializable {
 
         PurchaseOrder that = (PurchaseOrder) o;
 
-        if (poid != that.poid) return false;
-        if (statusString != null ? !statusString.equals(that.statusString) : that.statusString != null)
+        if (getPoid() != that.getPoid()) return false;
+        if (status != null ? !status.equals(that.status) : that.status != null) return false;
+        if (getDeliverydate() != null ? !getDeliverydate().equals(that.getDeliverydate()) : that.getDeliverydate() != null)
             return false;
-        if (deliverydate != null ? !deliverydate.equals(that.deliverydate) : that.deliverydate != null)
+        if (getDeliveryaddress() != null ? !getDeliveryaddress().equals(that.getDeliveryaddress()) : that.getDeliveryaddress() != null)
             return false;
-        if (deliveryaddress != null ? !deliveryaddress.equals(that.deliveryaddress) : that.deliveryaddress != null)
-            return false;
-        return !(mapurl != null ? !mapurl.equals(that.mapurl) : that.mapurl != null);
+        return !(getMapurl() != null ? !getMapurl().equals(that.getMapurl()) : that.getMapurl() != null);
 
     }
 
     @Override
     public int hashCode() {
-        int result = poid;
-        result = 31 * result + (statusString != null ? statusString.hashCode() : 0);
-        result = 31 * result + (deliverydate != null ? deliverydate.hashCode() : 0);
-        result = 31 * result + (deliveryaddress != null ? deliveryaddress.hashCode() : 0);
-        result = 31 * result + (mapurl != null ? mapurl.hashCode() : 0);
+        int result = getPoid();
+        result = 31 * result + (status != null ? status.hashCode() : 0);
+        result = 31 * result + (getDeliverydate() != null ? getDeliverydate().hashCode() : 0);
+        result = 31 * result + (getDeliveryaddress() != null ? getDeliveryaddress().hashCode() : 0);
+        result = 31 * result + (getMapurl() != null ? getMapurl().hashCode() : 0);
         return result;
     }
 }
