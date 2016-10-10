@@ -11,6 +11,8 @@ public class PurchaseOrder implements Serializable {
 
     @JsonProperty("poid")
     private int poid;
+    @JsonProperty("statusid")
+    private int statusid;
     @JsonProperty("status")
     private String status;
     @JsonProperty("deliverydate")
@@ -23,12 +25,21 @@ public class PurchaseOrder implements Serializable {
     public PurchaseOrder() {
     }
 
-    public PurchaseOrder(int poid, String status, String deliverydate, String deliveryaddress, String mapurl) {
+    public PurchaseOrder(int poid, int statusid, String status, String deliverydate, String deliveryaddress, String mapurl) {
         this.poid = poid;
+        this.statusid = statusid;
         this.status = status;
         this.deliverydate = deliverydate;
         this.deliveryaddress = deliveryaddress;
         this.mapurl = mapurl;
+    }
+
+    public int getStatusid() {
+        return statusid;
+    }
+
+    public void setStatusid(int statusid) {
+        this.statusid = statusid;
     }
 
     public String getStatus() {

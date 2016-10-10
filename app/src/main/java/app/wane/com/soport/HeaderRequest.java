@@ -23,7 +23,6 @@ public class HeaderRequest implements Serializable {
         this.service = "messenger";
         this.type = "request";
         this.token = TokenRest.val;
-        this.parameter = "";
     }
 
     public HeaderRequest(String option) {

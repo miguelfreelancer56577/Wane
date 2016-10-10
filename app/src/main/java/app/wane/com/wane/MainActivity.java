@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -33,56 +34,65 @@ import java.io.IOException;
 import java.util.List;
 
 import app.wane.com.adapters.AdapterPurchaseOrder;
+import app.wane.com.adapters.AdapterPurchaseOrderDetails;
 import app.wane.com.model.CatPurchaseOrder;
 import app.wane.com.model.PurchaseOrder;
+import app.wane.com.model.PurchaseOrderDetail;
 import app.wane.com.response.ListCatPurchaseStatus;
 import app.wane.com.response.ListPurchaseOrder;
+import app.wane.com.response.ListPurchaseOrderDetail;
 import app.wane.com.soport.HeaderRequest;
 import app.wane.com.soport.HeaderResponse;
 import app.wane.com.soport.TokenRest;
 
 import static app.wane.com.soport.ApiService.requestHeaders;
 import static app.wane.com.soport.ApiService.uriGetAllPurchaseOrder;
+import static app.wane.com.soport.ApiService.uriGetAllPurchaseOrderDetail;
 import static app.wane.com.soport.ApiService.uriLogout;
 import static app.wane.com.soport.ApiService.uriPoStatusCatalog;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final String logMainActivity = "MAIN_ACTIVITY";
-    private static final String statusMessenger = "statusMessenger";
-    private static final String logLogout = "logLogout";
-    private static final String logPurchaseOrder = "logPurchaseOrder";
+    protected static final String logMainActivity = "MAIN_ACTIVITY";
+    protected static final String statusMessenger = "statusMessenger";
+    protected static final String logLogout = "logLogout";
+    protected static final String logPurchaseOrder = "logPurchaseOrder";
+    protected static final String logPurchaseOrderDetails = "logPurchaseOrderDetails";
 
     //components of view
-    private View mProgressView;
-    private Pedidos pedidos;
-    private String[] datos;
-    private ArrayAdapter<String> adaptador;
-    private Spinner cmbOpciones;
-    private Intent intent;
-    private ListView listaPurchase;
+    protected View mProgressView;
+    protected Pedidos pedidos;
+    protected String[] datos;
+    protected ArrayAdapter<String> adaptador;
+    protected Spinner cmbOpciones;
+    protected Intent intent;
+    protected ListView listaPurchase;
+    protected ListView listaPurchaseDetails;
 
-    private Spinner cmbStatusMessenger;
-    private Button btnSaveStatusMessenger;
-    private RelativeLayout contetStatusMessenger;
-    private RelativeLayout contetFormMain;
+    protected Spinner cmbStatusMessenger;
+    protected Button btnSaveStatusMessenger;
+    protected RelativeLayout contetStatusMessenger;
+    protected RelativeLayout contetFormMain;
 
     //catalog status of purchase
-    private String[] catalogStatusPurchase;
+    protected String[] catalogStatusPurchase;
+
+    //list of purchase
+    protected List<PurchaseOrder> poList;
 
     //logout
-    private LogOut logOut;
+    protected LogOut logOut;
 
     //object to change status of purchase
-    private ChangeStatus changeStatus;
+    protected ChangeStatus changeStatus;
 
     //rest service to get catalog status of purchase
-    CatalogStatusPurchase statusPurchase;
+    protected CatalogStatusPurchase statusPurchase;
 
     // other
-    private Toast msg;
+    protected Toast msg;
     //api to rest service
-    private RestTemplate restTemplate = new RestTemplate();
+    protected RestTemplate restTemplate = new RestTemplate();
     //object to mapper json
     ObjectMapper mp = new ObjectMapper();
 
@@ -98,18 +108,12 @@ public class MainActivity extends AppCompatActivity {
         contetStatusMessenger = (RelativeLayout) findViewById(R.id.content_status_messenger);
         contetFormMain = (RelativeLayout) findViewById(R.id.content_form_main);
         listaPurchase = (ListView) findViewById(R.id.listView);
+        listaPurchaseDetails = (ListView) findViewById(R.id.listPurchaseDetails);
+
 
         //load by default catalog status of purchase
         statusPurchase = new CatalogStatusPurchase();
         statusPurchase.execute((Void) null);
-
-        try {
-            ObjectMapper mp = new ObjectMapper();
-            //Messenger messenger = new Messenger("log-in", "request", "messenger", TokenRest.val, "log-in", new User("admin", "admin"));
-            //Log.i(logMainActivity, mp.writeValueAsString(messenger));
-        } catch (Exception e) {
-            Log.e(logMainActivity, "ERROR to write json", e);
-        }
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -127,6 +131,27 @@ public class MainActivity extends AppCompatActivity {
                 Log.i(statusMessenger, "change status");
             }
         });
+
+        listaPurchase.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                //hide purchase order
+                showLayout(false, logMainActivity);
+                //show progress circule
+                showProgress(true);
+                //load catalog of status
+                attemptCatalogStatusMesenger();
+                //setter a status of the purchase
+                attemptStatusMesenger(position);
+                //load details of purchase
+                attemptDetailsPurchase(position);
+                //hide progress circule
+                showProgress(false);
+                //show view details purchase
+                showLayout(true, statusMessenger);
+            }
+        });
+
     }
 
     @Override
@@ -141,15 +166,14 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
         if (id == R.id.opt1) {
             Log.i(logMainActivity, "opt 1");
-            showLayout(false, statusMessenger);
-            showLayout(true, logMainActivity);
             //get pedidos
+            showLayout(false, statusMessenger);
             showProgress(true);
             pedidos = new Pedidos();
             pedidos.execute((Void) null);
+            showLayout(true, logMainActivity);
             return true;
         } else if (id == R.id.opt2) {
-            attemptStatusMesenger();
             return true;
         } else if (id == R.id.opt3) {
             logOut();
@@ -163,11 +187,25 @@ public class MainActivity extends AppCompatActivity {
         logOut.execute((Void) null);
     }
 
-    public void attemptStatusMesenger() {
-        showLayout(false, logMainActivity);
+    public void attemptCatalogStatusMesenger() {
+
         statusPurchase = new CatalogStatusPurchase();
         statusPurchase.execute((Void) null);
-        showLayout(true, statusMessenger);
+
+    }
+
+    public void attemptDetailsPurchase(int position){
+
+        DetailsPurchase detailsPurchase = new DetailsPurchase();
+        detailsPurchase.execute(position);
+
+    }
+
+    public void attemptStatusMesenger(int position){
+        if(catalogStatusPurchase != null){
+            //get rest service
+            cmbStatusMessenger.setSelection(poList.get(position).getStatusid()+1);
+        }
     }
 
 
@@ -216,9 +254,62 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public class Pedidos extends AsyncTask<Void, Void, Boolean> {
+    public class DetailsPurchase extends AsyncTask<Integer, Void, Boolean> {
 
-        List<PurchaseOrder> poList;
+        List<PurchaseOrderDetail> poDetail;
+
+        @Override
+        protected Boolean doInBackground(Integer... params) {
+            // rest service: request details purchase order
+            restTemplate.getMessageConverters().add(new StringHttpMessageConverter());
+            //HeaderRequest headerRequest = new HeaderRequest("podetail", String.valueOf(poList.get(params[0]).getPoid()));
+            HeaderRequest headerRequest = new HeaderRequest("podetail", "otro");
+            Log.i(logPurchaseOrderDetails, "object request to purchase details: " + headerRequest.toString());
+            try {
+                HttpEntity<String> requestEntity = new HttpEntity<String>("data=" + mp.writeValueAsString(headerRequest), requestHeaders());
+                ResponseEntity<String> response = restTemplate.exchange(uriGetAllPurchaseOrderDetail, HttpMethod.POST, requestEntity, String.class, requestEntity);
+                Log.d(logPurchaseOrderDetails, "reponse of service purchase details: " + response.getBody());
+                if (response.getStatusCode() != HttpStatus.OK) {
+                    throw new HttpServerErrorException(response.getStatusCode());
+                } else {
+                    ListPurchaseOrderDetail listPurchaseOrderDetail = mp.readValue(response.getBody(), ListPurchaseOrderDetail.class);
+                    if (listPurchaseOrderDetail.getResult().equals("success")) {
+                        poDetail = listPurchaseOrderDetail.getPodetail().getArray();
+                        return true;
+                    }
+                }
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+                return false;
+            } catch (IOException e) {
+                e.printStackTrace();
+                return false;
+            }
+            return false;
+        }
+
+        @Override
+        protected void onPostExecute(final Boolean success) {
+            if (success) {
+                AdapterPurchaseOrderDetails adaptador = new AdapterPurchaseOrderDetails(MainActivity.this, poDetail);
+                listaPurchaseDetails.setAdapter(adaptador);
+            } else {
+                msg = Toast.makeText(
+                        getApplicationContext(),
+                        "Error to load Purchase Order Details.",
+                        Toast.LENGTH_LONG);
+                msg.show();
+            }
+            showProgress(false);
+        }
+
+        @Override
+        protected void onCancelled() {
+            showProgress(false);
+        }
+    }
+
+    public class Pedidos extends AsyncTask<Void, Void, Boolean> {
 
         @Override
         protected Boolean doInBackground(Void... params) {
@@ -359,7 +450,7 @@ public class MainActivity extends AppCompatActivity {
                             Toast.LENGTH_LONG);
                     msg.show();
 
-                }else{
+                } else {
 
                     Log.d(statusMessenger, "Catalog status of purchase, was load");
 
@@ -376,12 +467,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
-    private void showProgress(final boolean show) {
+    protected void showProgress(final boolean show) {
         mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
     }
 
-    private void showLayout(final boolean show, final String nameLayout) {
+    protected void showLayout(final boolean show, final String nameLayout) {
         if (nameLayout.equals(logMainActivity)) {
             contetFormMain.setVisibility(show ? View.VISIBLE : View.GONE);
         } else if (nameLayout.equals(statusMessenger)) {

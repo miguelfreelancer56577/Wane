@@ -42,4 +42,11 @@
     <string name="po_txt_status">Status: </string>
     <string name="po_txt_deliverydate">Delivery date: </string>
     <string name="po_txt_deliveryaddress">Delivery Address: </string>
+    <!-- purchase order details -->
+    <string name="pod_lbl_sku">Sku: </string>
+    <string name="pod_lbl_quantity">Quantity: </string>
+    <string name="pod_lbl_shortdescription">Short Description: </string>
+    <string name="pod_lbl_titlepurchasedetails">Details: </string>
+    <string name="title_activity_purchase_order_details">PurchaseOrderDetails</string>
+
 </resources>

@@ -10,26 +10,25 @@ import app.wane.com.soport.HeaderResponse;
 /**
  * Created by Maricruz on 03/10/2016.
  */
-public class ListPurchaseOrderDetail extends HeaderResponse{
+public class ListPurchaseOrderDetail extends HeaderResponse {
 
     @JsonProperty("podetail")
-    public Object podetail;
+    public PoDetail podetail;
+
+    public ListPurchaseOrderDetail() {
+
+    }
 
     public ListPurchaseOrderDetail(String service, String type, String token, String option, String result, final int size, final List<PurchaseOrderDetail> listPurchaseOrderDetail) {
         super(service, type, token, option, result);
-        podetail = new Object(){
-            @JsonProperty("arraysize")
-            public int arraysizeAnInt = size;
-            @JsonProperty("array")
-            public List<PurchaseOrderDetail> array = listPurchaseOrderDetail;
-        };
+        podetail = new PoDetail(size, listPurchaseOrderDetail);
     }
 
-    public Object getPodetail() {
+    public PoDetail getPodetail() {
         return podetail;
     }
 
-    public void setPodetail(Object podetail) {
+    public void setPodetail(PoDetail podetail) {
         this.podetail = podetail;
     }
 
@@ -58,4 +57,64 @@ public class ListPurchaseOrderDetail extends HeaderResponse{
         result = 31 * result + (podetail != null ? podetail.hashCode() : 0);
         return result;
     }
+
+    public class PoDetail {
+
+        @JsonProperty("arraysize")
+        public int arraysize;
+        @JsonProperty("array")
+        public List<PurchaseOrderDetail> array;
+
+        public PoDetail() {
+        }
+
+        public PoDetail(int arraysize, List<PurchaseOrderDetail> array) {
+            this.arraysize = arraysize;
+            this.array = array;
+        }
+
+        public int getArraysize() {
+            return arraysize;
+        }
+
+        public void setArraysize(int arraysize) {
+            this.arraysize = arraysize;
+        }
+
+        public List<PurchaseOrderDetail> getArray() {
+            return array;
+        }
+
+        public void setArray(List<PurchaseOrderDetail> array) {
+            this.array = array;
+        }
+
+        @Override
+        public String toString() {
+            return "PoDetail{" +
+                    "arraysize=" + arraysize +
+                    ", array=" + array +
+                    '}';
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof PoDetail)) return false;
+
+            PoDetail poDetail = (PoDetail) o;
+
+            if (arraysize != poDetail.arraysize) return false;
+            return !(array != null ? !array.equals(poDetail.array) : poDetail.array != null);
+
+        }
+
+        @Override
+        public int hashCode() {
+            int result = arraysize;
+            result = 31 * result + (array != null ? array.hashCode() : 0);
+            return result;
+        }
+    }
+
 }

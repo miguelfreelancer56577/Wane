@@ -11,6 +11,7 @@ public class ApiService {
     public final static String uriLogin = endPoint + "login";
     public final static String uriLogout = endPoint + "logout";
     public final static String uriGetAllPurchaseOrder = endPoint + "getAllPurchaseOrder";
+    public final static String uriGetAllPurchaseOrderDetail = endPoint + "getAllPurchaseOrderDetail";
     public final static String uriPoStatusCatalog = endPoint + "catalogPurchaseOrder";
     public final static HttpHeaders requestHeaders (){
         HttpHeaders requestHeaders = new HttpHeaders();

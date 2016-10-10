@@ -34,6 +34,38 @@ public class PurchaseOrderDetail implements Serializable {
         this.shortdescription = shortdescription;
     }
 
+    public int getPoid() {
+        return poid;
+    }
+
+    public void setPoid(int poid) {
+        this.poid = poid;
+    }
+
+    public String getSku() {
+        return sku;
+    }
+
+    public void setSku(String sku) {
+        this.sku = sku;
+    }
+
+    public String getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(String quantity) {
+        this.quantity = quantity;
+    }
+
+    public String getShortdescription() {
+        return shortdescription;
+    }
+
+    public void setShortdescription(String shortdescription) {
+        this.shortdescription = shortdescription;
+    }
+
     @Override
     public String toString() {
         return "PurchaseOrderDetail{" +

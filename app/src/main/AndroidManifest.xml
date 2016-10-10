@@ -27,11 +27,23 @@
             android:name=".MainActivity"
             android:label="@string/activity_main"
             android:theme="@style/AppTheme.NoActionBar" />
-        <!-- ATTENTION: This was auto-generated to add Google Play services to your project for
-             App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information. -->
+        <!--
+             ATTENTION: This was auto-generated to add Google Play services to your project for
+             App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information.
+        -->
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
+
+        <activity
+            android:name=".PurchaseOrderDetails"
+            android:label="@string/title_activity_purchase_order_details"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="app.wane.com.wane.MainActivity" />
+        </activity>
     </application>
 
 </manifest>
