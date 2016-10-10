@@ -5,17 +5,13 @@
 
     <item android:id="@+id/opt1"
         android:title="@string/menu_main_activity_opt1"
-        android:orderInCategory="100"
-        app:showAsAction="never" />
-
-    <item android:id="@+id/opt2"
-        android:title="@string/menu_main_activity_opt2"
-        android:orderInCategory="100"
-        app:showAsAction="never" />
+        android:orderInCategory="1"
+        android:icon="@android:drawable/stat_notify_sync_noanim"
+        app:showAsAction="ifRoom" />
 
     <item android:id="@+id/opt3"
         android:title="@string/menu_main_activity_opt3"
-        android:orderInCategory="100"
+        android:orderInCategory="2"
         app:showAsAction="never" />
 
 </menu>

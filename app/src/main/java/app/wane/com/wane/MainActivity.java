@@ -115,6 +115,11 @@ public class MainActivity extends AppCompatActivity {
         statusPurchase = new CatalogStatusPurchase();
         statusPurchase.execute((Void) null);
 
+        //load and display purchase orders
+        pedidos = new Pedidos();
+        pedidos.execute((Void) null);
+        showLayout(true, logMainActivity);
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -168,12 +173,11 @@ public class MainActivity extends AppCompatActivity {
             Log.i(logMainActivity, "opt 1");
             //get pedidos
             showLayout(false, statusMessenger);
+            showLayout(false, logMainActivity);
             showProgress(true);
             pedidos = new Pedidos();
             pedidos.execute((Void) null);
             showLayout(true, logMainActivity);
-            return true;
-        } else if (id == R.id.opt2) {
             return true;
         } else if (id == R.id.opt3) {
             logOut();
