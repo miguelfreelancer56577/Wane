@@ -21,17 +21,28 @@ public class PurchaseOrder implements Serializable {
     private String deliveryaddress;
     @JsonProperty("mapurl")
     private String mapurl;
+    @JsonProperty("color")
+    private String color;
 
     public PurchaseOrder() {
     }
 
-    public PurchaseOrder(int poid, int statusid, String status, String deliverydate, String deliveryaddress, String mapurl) {
+    public PurchaseOrder(int poid, int statusid, String status, String deliverydate, String deliveryaddress, String mapurl, String color) {
         this.poid = poid;
         this.statusid = statusid;
         this.status = status;
         this.deliverydate = deliverydate;
         this.deliveryaddress = deliveryaddress;
         this.mapurl = mapurl;
+        this.color = color;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
     }
 
     public int getStatusid() {
@@ -86,10 +97,12 @@ public class PurchaseOrder implements Serializable {
     public String toString() {
         return "PurchaseOrder{" +
                 "poid=" + poid +
+                ", statusid=" + statusid +
                 ", status='" + status + '\'' +
                 ", deliverydate='" + deliverydate + '\'' +
                 ", deliveryaddress='" + deliveryaddress + '\'' +
                 ", mapurl='" + mapurl + '\'' +
+                ", color='" + color + '\'' +
                 '}';
     }
 
@@ -101,22 +114,28 @@ public class PurchaseOrder implements Serializable {
         PurchaseOrder that = (PurchaseOrder) o;
 
         if (getPoid() != that.getPoid()) return false;
-        if (status != null ? !status.equals(that.status) : that.status != null) return false;
+        if (getStatusid() != that.getStatusid()) return false;
+        if (getStatus() != null ? !getStatus().equals(that.getStatus()) : that.getStatus() != null)
+            return false;
         if (getDeliverydate() != null ? !getDeliverydate().equals(that.getDeliverydate()) : that.getDeliverydate() != null)
             return false;
         if (getDeliveryaddress() != null ? !getDeliveryaddress().equals(that.getDeliveryaddress()) : that.getDeliveryaddress() != null)
             return false;
-        return !(getMapurl() != null ? !getMapurl().equals(that.getMapurl()) : that.getMapurl() != null);
+        if (getMapurl() != null ? !getMapurl().equals(that.getMapurl()) : that.getMapurl() != null)
+            return false;
+        return !(getColor() != null ? !getColor().equals(that.getColor()) : that.getColor() != null);
 
     }
 
     @Override
     public int hashCode() {
         int result = getPoid();
-        result = 31 * result + (status != null ? status.hashCode() : 0);
+        result = 31 * result + getStatusid();
+        result = 31 * result + (getStatus() != null ? getStatus().hashCode() : 0);
         result = 31 * result + (getDeliverydate() != null ? getDeliverydate().hashCode() : 0);
         result = 31 * result + (getDeliveryaddress() != null ? getDeliveryaddress().hashCode() : 0);
         result = 31 * result + (getMapurl() != null ? getMapurl().hashCode() : 0);
+        result = 31 * result + (getColor() != null ? getColor().hashCode() : 0);
         return result;
     }
 }
