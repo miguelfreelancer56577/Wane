@@ -12,8 +12,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
@@ -34,63 +32,39 @@ import java.io.IOException;
 import java.util.List;
 
 import app.wane.com.adapters.AdapterPurchaseOrder;
-import app.wane.com.adapters.AdapterPurchaseOrderDetails;
-import app.wane.com.model.CatPurchaseOrder;
 import app.wane.com.model.PurchaseOrder;
-import app.wane.com.model.PurchaseOrderDetail;
-import app.wane.com.response.ListCatPurchaseStatus;
 import app.wane.com.response.ListPurchaseOrder;
-import app.wane.com.response.ListPurchaseOrderDetail;
 import app.wane.com.soport.HeaderRequest;
 import app.wane.com.soport.HeaderResponse;
 import app.wane.com.soport.TokenRest;
 
 import static app.wane.com.soport.ApiService.requestHeaders;
 import static app.wane.com.soport.ApiService.uriGetAllPurchaseOrder;
-import static app.wane.com.soport.ApiService.uriGetAllPurchaseOrderDetail;
 import static app.wane.com.soport.ApiService.uriLogout;
-import static app.wane.com.soport.ApiService.uriPoStatusCatalog;
 
 public class MainActivity extends AppCompatActivity {
 
+    //logs
     protected static final String logMainActivity = "MAIN_ACTIVITY";
-    protected static final String statusMessenger = "statusMessenger";
     protected static final String logLogout = "logLogout";
     protected static final String logPurchaseOrder = "logPurchaseOrder";
-    protected static final String logPurchaseOrderDetails = "logPurchaseOrderDetails";
 
     //components of view
     protected View mProgressView;
-    protected Pedidos pedidos;
-    protected String[] datos;
-    protected ArrayAdapter<String> adaptador;
     protected Spinner cmbOpciones;
-    protected Intent intent;
     protected ListView listaPurchase;
-    protected ListView listaPurchaseDetails;
-
-    protected Spinner cmbStatusMessenger;
-    protected Button btnSaveStatusMessenger;
-    protected RelativeLayout contetStatusMessenger;
     protected RelativeLayout contetFormMain;
+    protected Toast msg;
 
-    //catalog status of purchase
-    protected String[] catalogStatusPurchase;
+    // other
+    protected Intent intent;
+
+    //service
+    protected Pedidos pedidos;
+    protected LogOut logOut;
 
     //list of purchase
     protected List<PurchaseOrder> poList;
-
-    //logout
-    protected LogOut logOut;
-
-    //object to change status of purchase
-    protected ChangeStatus changeStatus;
-
-    //rest service to get catalog status of purchase
-    protected CatalogStatusPurchase statusPurchase;
-
-    // other
-    protected Toast msg;
     //api to rest service
     protected RestTemplate restTemplate = new RestTemplate();
     //object to mapper json
@@ -102,23 +76,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        // get components
         mProgressView = findViewById(R.id.activity_progress);
-        cmbStatusMessenger = (Spinner) findViewById(R.id.cmbStatusMessenger);
-        btnSaveStatusMessenger = (Button) findViewById(R.id.btnSaveStatusMessenger);
-        contetStatusMessenger = (RelativeLayout) findViewById(R.id.content_status_messenger);
         contetFormMain = (RelativeLayout) findViewById(R.id.content_form_main);
         listaPurchase = (ListView) findViewById(R.id.listView);
-        listaPurchaseDetails = (ListView) findViewById(R.id.listPurchaseDetails);
-
-
-        //load by default catalog status of purchase
-        statusPurchase = new CatalogStatusPurchase();
-        statusPurchase.execute((Void) null);
 
         //load and display purchase orders
-        pedidos = new Pedidos();
-        pedidos.execute((Void) null);
-        showLayout(true, logMainActivity);
+        pedidos();
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -129,31 +94,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        btnSaveStatusMessenger.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //showProgress(true);
-                Log.i(statusMessenger, "change status");
-            }
-        });
-
         listaPurchase.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                //hide purchase order
-                showLayout(false, logMainActivity);
-                //show progress circule
-                showProgress(true);
-                //load catalog of status
-                attemptCatalogStatusMesenger();
-                //setter a status of the purchase
-                attemptStatusMesenger(position);
-                //load details of purchase
-                attemptDetailsPurchase(position);
-                //hide progress circule
-                showProgress(false);
-                //show view details purchase
-                showLayout(true, statusMessenger);
+                intent = new Intent(MainActivity.this, PurchaseOrderDetails.class);
+                Bundle bundle = new Bundle();
+                bundle.putIntArray("params", new int[]{poList.get(position).getPoid(), poList.get(position).getStatusid()});
+                intent.putExtras(bundle);
+                startActivity(intent);
             }
         });
 
@@ -170,14 +118,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.opt1) {
-            Log.i(logMainActivity, "opt 1");
-            //get pedidos
-            showLayout(false, statusMessenger);
-            showLayout(false, logMainActivity);
-            showProgress(true);
-            pedidos = new Pedidos();
-            pedidos.execute((Void) null);
-            showLayout(true, logMainActivity);
+            pedidos();
             return true;
         } else if (id == R.id.opt3) {
             logOut();
@@ -186,32 +127,16 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    public void pedidos(){
+        //get pedidos
+        pedidos = new Pedidos();
+        pedidos.execute((Void) null);
+    }
+
     public void logOut() {
         logOut = new LogOut();
         logOut.execute((Void) null);
     }
-
-    public void attemptCatalogStatusMesenger() {
-
-        statusPurchase = new CatalogStatusPurchase();
-        statusPurchase.execute((Void) null);
-
-    }
-
-    public void attemptDetailsPurchase(int position){
-
-        DetailsPurchase detailsPurchase = new DetailsPurchase();
-        detailsPurchase.execute(position);
-
-    }
-
-    public void attemptStatusMesenger(int position){
-        if(catalogStatusPurchase != null){
-            //get rest service
-            cmbStatusMessenger.setSelection(poList.get(position).getStatusid()+1);
-        }
-    }
-
 
     public class LogOut extends AsyncTask<Void, Void, Boolean> {
         @Override
@@ -258,61 +183,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public class DetailsPurchase extends AsyncTask<Integer, Void, Boolean> {
-
-        List<PurchaseOrderDetail> poDetail;
-
-        @Override
-        protected Boolean doInBackground(Integer... params) {
-            // rest service: request details purchase order
-            restTemplate.getMessageConverters().add(new StringHttpMessageConverter());
-            //HeaderRequest headerRequest = new HeaderRequest("podetail", String.valueOf(poList.get(params[0]).getPoid()));
-            HeaderRequest headerRequest = new HeaderRequest("podetail", "otro");
-            Log.i(logPurchaseOrderDetails, "object request to purchase details: " + headerRequest.toString());
-            try {
-                HttpEntity<String> requestEntity = new HttpEntity<String>("data=" + mp.writeValueAsString(headerRequest), requestHeaders());
-                ResponseEntity<String> response = restTemplate.exchange(uriGetAllPurchaseOrderDetail, HttpMethod.POST, requestEntity, String.class, requestEntity);
-                Log.d(logPurchaseOrderDetails, "reponse of service purchase details: " + response.getBody());
-                if (response.getStatusCode() != HttpStatus.OK) {
-                    throw new HttpServerErrorException(response.getStatusCode());
-                } else {
-                    ListPurchaseOrderDetail listPurchaseOrderDetail = mp.readValue(response.getBody(), ListPurchaseOrderDetail.class);
-                    if (listPurchaseOrderDetail.getResult().equals("success")) {
-                        poDetail = listPurchaseOrderDetail.getPodetail().getArray();
-                        return true;
-                    }
-                }
-            } catch (JsonProcessingException e) {
-                e.printStackTrace();
-                return false;
-            } catch (IOException e) {
-                e.printStackTrace();
-                return false;
-            }
-            return false;
-        }
-
-        @Override
-        protected void onPostExecute(final Boolean success) {
-            if (success) {
-                AdapterPurchaseOrderDetails adaptador = new AdapterPurchaseOrderDetails(MainActivity.this, poDetail);
-                listaPurchaseDetails.setAdapter(adaptador);
-            } else {
-                msg = Toast.makeText(
-                        getApplicationContext(),
-                        "Error to load Purchase Order Details.",
-                        Toast.LENGTH_LONG);
-                msg.show();
-            }
-            showProgress(false);
-        }
-
-        @Override
-        protected void onCancelled() {
-            showProgress(false);
-        }
-    }
-
     public class Pedidos extends AsyncTask<Void, Void, Boolean> {
 
         @Override
@@ -349,6 +219,8 @@ public class MainActivity extends AppCompatActivity {
             if (success) {
                 AdapterPurchaseOrder adaptador = new AdapterPurchaseOrder(MainActivity.this, poList);
                 listaPurchase.setAdapter(adaptador);
+                msg = Toast.makeText(MainActivity.this, "Records updated", Toast.LENGTH_SHORT);
+                msg.show();
             } else {
                 msg = Toast.makeText(
                         getApplicationContext(),
@@ -356,130 +228,18 @@ public class MainActivity extends AppCompatActivity {
                         Toast.LENGTH_LONG);
                 msg.show();
             }
-            showProgress(false);
             pedidos = null;
         }
 
         @Override
         protected void onCancelled() {
             pedidos = null;
-            showProgress(false);
         }
-    }
-
-    public class ChangeStatus extends AsyncTask<Void, Void, Boolean> {
-
-        @Override
-        protected Boolean doInBackground(Void... params) {
-            Log.i(statusMessenger, "requesting");
-            return true;
-        }
-
-        @Override
-        protected void onPostExecute(final Boolean success) {
-            changeStatus = null;
-            Log.i(statusMessenger, "row updated");
-            String[] status = new String[]{"Disponible", "1 pedido asignado", "2 pedidos asignados", "3+ pedidos asignados",
-                    "Formado para pagar", "En camino a entrega", "Inactivo 10 minutos",
-                    "Inactivo 15 minutos", "Inactivo 20 minutos", "Inactivo 30+ minutos",
-                    "Accidente de tránsito", "Incidente con el usuario", "Desconectado"};
-            //cmbStatusMessenger
-            adaptador = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_spinner_item, status);
-            adaptador.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            cmbStatusMessenger.setAdapter(adaptador);
-            cmbStatusMessenger.setSelection(4);
-        }
-
-        @Override
-        protected void onCancelled() {
-            changeStatus = null;
-        }
-    }
-
-    public class CatalogStatusPurchase extends AsyncTask<Void, Void, Boolean> {
-
-        public List<CatPurchaseOrder> catalog;
-
-        @Override
-        protected Boolean doInBackground(Void... params) {
-
-            if(catalogStatusPurchase == null){
-
-                //request logout rest service
-                restTemplate.getMessageConverters().add(new StringHttpMessageConverter());
-                HeaderRequest headerRequest = new HeaderRequest("postatuscatalog");
-                try {
-                    HttpEntity<String> requestEntity = new HttpEntity<String>("data=" + mp.writeValueAsString(headerRequest), requestHeaders());
-                    ResponseEntity<String> response = restTemplate.exchange(uriPoStatusCatalog, HttpMethod.POST, requestEntity, String.class, requestEntity);
-                    Log.d(statusMessenger, "reponse of service postatuscatalog" + response.getBody());
-                    if (response.getStatusCode() != HttpStatus.OK) {
-                        throw new HttpServerErrorException(response.getStatusCode());
-                    } else {
-                        ListCatPurchaseStatus listCatPurchaseStatus = mp.readValue(response.getBody(), ListCatPurchaseStatus.class);
-                        if (listCatPurchaseStatus.getResult().equals("success")) {
-                            catalog = listCatPurchaseStatus.getPostatuscatalog().getArray();
-                            return true;
-                        }
-                    }
-                } catch (JsonProcessingException e) {
-                    e.printStackTrace();
-                    return false;
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    return false;
-                }
-
-            }
-
-            return false;
-        }
-
-        @Override
-        protected void onPostExecute(final Boolean success) {
-            if (success) {
-                catalogStatusPurchase = new String[catalog.size()];
-                for (int i = 0; i < catalog.size(); i ++){
-                    catalogStatusPurchase[i] =  catalog.get(i).getStatus();
-                }
-                adaptador = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_spinner_item, catalogStatusPurchase);
-                adaptador.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                cmbStatusMessenger.setAdapter(adaptador);
-            } else {
-
-                if(catalogStatusPurchase == null){
-
-                    msg = Toast.makeText(
-                            getApplicationContext(),
-                            "Error to load catalog of status to Purchase.",
-                            Toast.LENGTH_LONG);
-                    msg.show();
-
-                } else {
-
-                    Log.d(statusMessenger, "Catalog status of purchase, was load");
-
-                }
-
-            }
-            statusPurchase = null;
-            //cmbStatusMessenger.setSelection(4);
-        }
-
-        @Override
-        protected void onCancelled() {
-            statusPurchase = null;
-        }
-    }
-
-    protected void showProgress(final boolean show) {
-        mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
     }
 
     protected void showLayout(final boolean show, final String nameLayout) {
         if (nameLayout.equals(logMainActivity)) {
             contetFormMain.setVisibility(show ? View.VISIBLE : View.GONE);
-        } else if (nameLayout.equals(statusMessenger)) {
-            contetStatusMessenger.setVisibility(show ? View.VISIBLE : View.GONE);
         }
     }
 

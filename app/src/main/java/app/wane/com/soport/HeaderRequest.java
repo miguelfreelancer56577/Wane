@@ -83,6 +83,7 @@ public class HeaderRequest implements Serializable {
                 ", type='" + type + '\'' +
                 ", token='" + token + '\'' +
                 ", option='" + option + '\'' +
+                ", parameter='" + parameter + '\'' +
                 '}';
     }
 

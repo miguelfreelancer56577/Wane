@@ -47,6 +47,6 @@
     <string name="pod_lbl_quantity">Quantity: </string>
     <string name="pod_lbl_shortdescription">Short Description: </string>
     <string name="pod_lbl_titlepurchasedetails">Details: </string>
-    <string name="title_activity_purchase_order_details">PurchaseOrderDetails</string>
+    <string name="title_activity_purchase_order_details">Purchase Order Details</string>
 
 </resources>
