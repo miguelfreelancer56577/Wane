@@ -1,10 +1,12 @@
 package app.wane.com.adapters;
 
 import android.app.Activity;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.TableLayout;
 import android.widget.TextView;
 
 import java.util.List;
@@ -39,16 +41,17 @@ public class AdapterPurchaseOrder extends ArrayAdapter {
             holder.txtStatus = (TextView)item.findViewById(R.id.status);
             holder.txtDeliveryDate = (TextView)item.findViewById(R.id.deliverydate);
             holder.txtDeliveryAddress = (TextView)item.findViewById(R.id.deliveryaddress);
+            holder.contentPo = (TableLayout)item.findViewById(R.id.contentPo);
 
             item.setTag(holder);
 
         }else{
             holder = (ViewHolderPurchaseOrder)item.getTag();
         }
+        holder.contentPo.setBackgroundColor(Color.parseColor(purchaseOrders.get(position).getColor()));
         holder.txtStatus.setText(purchaseOrders.get(position).getStatus());
         holder.txtDeliveryDate.setText(purchaseOrders.get(position).getDeliverydate());
         holder.txtDeliveryAddress.setText(purchaseOrders.get(position).getDeliveryaddress());
-
         return item;
     }
 
@@ -56,6 +59,7 @@ public class AdapterPurchaseOrder extends ArrayAdapter {
         TextView txtStatus;
         TextView txtDeliveryDate;
         TextView txtDeliveryAddress;
+        TableLayout contentPo;
     }
 
 }
