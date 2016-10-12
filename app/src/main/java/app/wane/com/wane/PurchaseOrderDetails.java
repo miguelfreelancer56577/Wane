@@ -1,10 +1,14 @@
 package app.wane.com.wane;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -58,6 +62,8 @@ public class PurchaseOrderDetails extends AppCompatActivity {
     protected ArrayAdapter<String> adaptador;
     //catalog of status
     protected List<CatPurchaseOrder> catalog;
+    //url from google maps
+    protected String mapurl;
     //components
     protected Spinner cmbStatusMessenger;
     protected Button btnSaveStatusMessenger;
@@ -103,24 +109,54 @@ public class PurchaseOrderDetails extends AppCompatActivity {
         super.onStart();
         //get purchase details
         Bundle bundle = getIntent().getExtras();
-        int[] params = bundle.getIntArray("params");
+        String[] params = bundle.getStringArray("params");
+
+        //url map
+        mapurl = params[2];
 
         //load details of purchase
         if(detailsPurchase == null){
 
             detailsPurchase = new DetailsPurchase();
-            detailsPurchase.execute(params[0]);
+            detailsPurchase.execute(Integer.parseInt(params[0]));
 
         }
 
         // get postatuscatalog
         if(poStatusCatalog == null){
 
-            poStatusCatalog = new PoStatusCatalog(params[1]);
+            poStatusCatalog = new PoStatusCatalog(Integer.parseInt(params[1]));
             poStatusCatalog.execute((Void) null);
 
         }
 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_po_details, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.locationPurchase) {
+            if(mapurl == null){
+                msg = Toast.makeText(
+                        getApplicationContext(),
+                        "Without url.",
+                        Toast.LENGTH_LONG);
+                msg.show();
+            }else{
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setData(Uri.parse(mapurl));
+                startActivity(intent);
+            }
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     public class PoStatusCatalog extends AsyncTask<Void, Void, Boolean> {

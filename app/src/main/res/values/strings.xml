@@ -48,5 +48,6 @@
     <string name="pod_lbl_shortdescription">Short Description: </string>
     <string name="pod_lbl_titlepurchasedetails">Details: </string>
     <string name="title_activity_purchase_order_details">Purchase Order Details</string>
+    <string name="pod_menu_location">Location</string>
 
 </resources>

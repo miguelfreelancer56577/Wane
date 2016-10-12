@@ -96,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 intent = new Intent(MainActivity.this, PurchaseOrderDetails.class);
                 Bundle bundle = new Bundle();
-                bundle.putIntArray("params", new int[]{poList.get(position).getPoid(), poList.get(position).getStatusid()});
+                bundle.putStringArray("params", new String[]{Integer.toString(poList.get(position).getPoid()), Integer.toString(poList.get(position).getStatusid()), poList.get(position).getMapurl()});
                 intent.putExtras(bundle);
                 startActivity(intent);
             }
