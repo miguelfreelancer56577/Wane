@@ -82,9 +82,6 @@ public class MainActivity extends AppCompatActivity {
         contetFormMain = (RelativeLayout) findViewById(R.id.content_form_main);
         listaPurchase = (ListView) findViewById(R.id.listView);
 
-        //load and display purchase orders
-        pedidos();
-
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -99,12 +96,22 @@ public class MainActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 intent = new Intent(MainActivity.this, PurchaseOrderDetails.class);
                 Bundle bundle = new Bundle();
-                bundle.putIntArray("params", new int[]{poList.get(position).getPoid(), poList.get(position).getStatusid()});
+                bundle.putStringArray("params", new String[]{Integer.toString(poList.get(position).getPoid()), Integer.toString(poList.get(position).getStatusid()), poList.get(position).getMapurl()});
                 intent.putExtras(bundle);
                 startActivity(intent);
             }
         });
 
+    }
+
+    @Override
+    protected void onStart(){
+        super.onStart();
+        //load and display purchase orders
+        if(pedidos == null){
+            pedidos = new Pedidos();
+            pedidos.execute((Void) null);
+        }
     }
 
     @Override
@@ -118,19 +125,13 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.opt1) {
-            pedidos();
+            new Pedidos().execute((Void) null);
             return true;
         } else if (id == R.id.opt3) {
             logOut();
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    public void pedidos(){
-        //get pedidos
-        pedidos = new Pedidos();
-        pedidos.execute((Void) null);
     }
 
     public void logOut() {
@@ -228,12 +229,15 @@ public class MainActivity extends AppCompatActivity {
                         Toast.LENGTH_LONG);
                 msg.show();
             }
-            pedidos = null;
         }
 
         @Override
         protected void onCancelled() {
-            pedidos = null;
+            msg = Toast.makeText(
+                    getApplicationContext(),
+                    "Request canceled.",
+                    Toast.LENGTH_LONG);
+            msg.show();
         }
     }
 

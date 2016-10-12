@@ -13,6 +13,7 @@ public class ApiService {
     public final static String uriGetAllPurchaseOrder = endPoint + "getAllPurchaseOrder";
     public final static String uriGetAllPurchaseOrderDetail = endPoint + "getAllPurchaseOrderDetail";
     public final static String uriPoStatusCatalog = endPoint + "catalogPurchaseOrder";
+    public final static String uriUpdatePoStatus = endPoint + "changeStatusPurchase";
     public final static HttpHeaders requestHeaders (){
         HttpHeaders requestHeaders = new HttpHeaders();
         requestHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
