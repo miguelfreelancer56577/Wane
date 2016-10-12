@@ -33,16 +33,19 @@ import app.wane.com.model.PurchaseOrderDetail;
 import app.wane.com.response.ListCatPurchaseStatus;
 import app.wane.com.response.ListPurchaseOrderDetail;
 import app.wane.com.soport.HeaderRequest;
+import app.wane.com.soport.HeaderResponse;
 
 import static app.wane.com.soport.ApiService.requestHeaders;
 import static app.wane.com.soport.ApiService.uriGetAllPurchaseOrderDetail;
 import static app.wane.com.soport.ApiService.uriPoStatusCatalog;
+import static app.wane.com.soport.ApiService.uriUpdatePoStatus;
 
 public class PurchaseOrderDetails extends AppCompatActivity {
 
     //logs
     protected static final String statusMessenger = "statusMessenger";
     protected static final String logPurchaseOrderDetails = "logPurchaseOrderDetails";
+    protected static final String logChangeStatusPurchase = "logChangeStatusPurchase";
 
     //api to rest service
     protected RestTemplate restTemplate = new RestTemplate();
@@ -53,14 +56,14 @@ public class PurchaseOrderDetails extends AppCompatActivity {
     DetailsPurchase detailsPurchase;
     //adapters
     protected ArrayAdapter<String> adaptador;
+    //catalog of status
+    protected List<CatPurchaseOrder> catalog;
     //components
     protected Spinner cmbStatusMessenger;
     protected Button btnSaveStatusMessenger;
     protected ListView listaPurchaseDetails;
     protected ProgressBar mProgressView;
     protected Toast msg;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,34 +79,52 @@ public class PurchaseOrderDetails extends AppCompatActivity {
         listaPurchaseDetails = (ListView) findViewById(R.id.listPurchaseDetails);
         mProgressView = (ProgressBar) findViewById(R.id.activity_progress);
 
+        //events
+        btnSaveStatusMessenger.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                btnSaveStatusMessenger.setEnabled(false);
+                String selected =  cmbStatusMessenger.getSelectedItem().toString();
+                for (CatPurchaseOrder item: catalog){
+                    if(item.getStatus().equals(selected)){
+                        int statusId = item.getStatusid();
+                        new ChangeStatusPurchase().execute(statusId);
+                        new PoStatusCatalog(statusId).execute((Void) null);
+                        break;
+                    }
+                }
+                btnSaveStatusMessenger.setEnabled(true);
+            }
+        });
+    }
+
+    @Override
+    protected void onStart(){
+        super.onStart();
         //get purchase details
         Bundle bundle = getIntent().getExtras();
         int[] params = bundle.getIntArray("params");
 
         //load details of purchase
-        detailsPurchase = new DetailsPurchase();
-        detailsPurchase.execute(params[0]);
+        if(detailsPurchase == null){
+
+            detailsPurchase = new DetailsPurchase();
+            detailsPurchase.execute(params[0]);
+
+        }
 
         // get postatuscatalog
-        poStatusCatalog = new PoStatusCatalog(params[1]);
-        poStatusCatalog.execute((Void) null);
+        if(poStatusCatalog == null){
 
+            poStatusCatalog = new PoStatusCatalog(params[1]);
+            poStatusCatalog.execute((Void) null);
 
-        //events
-        btnSaveStatusMessenger.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //showProgress(true);
-                Log.i(statusMessenger, "change status");
-            }
-        });
-
+        }
 
     }
 
     public class PoStatusCatalog extends AsyncTask<Void, Void, Boolean> {
 
-        protected List<CatPurchaseOrder> catalog;
         protected int selectedStatusId;
 
         public PoStatusCatalog(int selectedStatusId) {
@@ -112,6 +133,8 @@ public class PurchaseOrderDetails extends AppCompatActivity {
 
         @Override
         protected Boolean doInBackground(Void... params) {
+
+            if(catalog == null){
 
                 //request logout rest service
                 restTemplate.getMessageConverters().add(new StringHttpMessageConverter());
@@ -137,6 +160,9 @@ public class PurchaseOrderDetails extends AppCompatActivity {
                     return false;
                 }
 
+            }else{
+                return true;
+            }
             return false;
         }
 
@@ -167,12 +193,15 @@ public class PurchaseOrderDetails extends AppCompatActivity {
                 msg.show();
 
             }
-            poStatusCatalog = null;
         }
 
         @Override
         protected void onCancelled() {
-            poStatusCatalog = null;
+            msg = Toast.makeText(
+                    getApplicationContext(),
+                    "Request canceled.",
+                    Toast.LENGTH_LONG);
+            msg.show();
         }
     }
 
@@ -222,12 +251,63 @@ public class PurchaseOrderDetails extends AppCompatActivity {
                         Toast.LENGTH_LONG);
                 msg.show();
             }
-            detailsPurchase = null;
         }
 
         @Override
         protected void onCancelled() {
-            detailsPurchase = null;
+            msg = Toast.makeText(
+                    getApplicationContext(),
+                    "Request canceled.",
+                    Toast.LENGTH_LONG);
+            msg.show();
+        }
+    }
+
+    public class ChangeStatusPurchase extends AsyncTask<Integer, Void, Boolean> {
+        @Override
+        protected Boolean doInBackground(Integer... params) {
+            //request logout rest service
+            restTemplate.getMessageConverters().add(new StringHttpMessageConverter());
+            HeaderRequest headerRequest = new HeaderRequest("updatepostatus", params[0].toString());
+            try {
+                HttpEntity<String> requestEntity = new HttpEntity<String>("data=" + mp.writeValueAsString(headerRequest), requestHeaders());
+                ResponseEntity<String> response = restTemplate.exchange(uriUpdatePoStatus, HttpMethod.POST, requestEntity, String.class, requestEntity);
+                Log.d(logChangeStatusPurchase, "reponse of service changeStatusPurchase" + response.getBody());
+                if (response.getStatusCode() != HttpStatus.OK) {
+                    throw new HttpServerErrorException(response.getStatusCode());
+                } else {
+                    HeaderResponse headerResponse = mp.readValue(response.getBody(), HeaderResponse.class);
+                    if (headerResponse.getResult().equals("success")) {
+                        return true;
+                    }
+                }
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+                return false;
+            } catch (IOException e) {
+                e.printStackTrace();
+                return false;
+            }
+            return false;
+        }
+
+        @Override
+        protected void onPostExecute(final Boolean success) {
+            if (success) {
+                msg = Toast.makeText(PurchaseOrderDetails.this, "Purchase Updated Successfuly", Toast.LENGTH_LONG);
+            } else {
+                msg = Toast.makeText(PurchaseOrderDetails.this, "ERROR to update status", Toast.LENGTH_LONG);
+            }
+            msg.show();
+        }
+
+        @Override
+        protected void onCancelled() {
+            msg = Toast.makeText(
+                    getApplicationContext(),
+                    "Request canceled.",
+                    Toast.LENGTH_LONG);
+            msg.show();
         }
     }
 
