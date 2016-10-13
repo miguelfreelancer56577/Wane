@@ -34,6 +34,7 @@ import java.util.List;
 import app.wane.com.adapters.AdapterPurchaseOrder;
 import app.wane.com.model.PurchaseOrder;
 import app.wane.com.response.ListPurchaseOrder;
+import app.wane.com.response.PanicButton;
 import app.wane.com.soport.HeaderRequest;
 import app.wane.com.soport.HeaderResponse;
 import app.wane.com.soport.TokenRest;
@@ -41,6 +42,7 @@ import app.wane.com.soport.TokenRest;
 import static app.wane.com.soport.ApiService.requestHeaders;
 import static app.wane.com.soport.ApiService.uriGetAllPurchaseOrder;
 import static app.wane.com.soport.ApiService.uriLogout;
+import static app.wane.com.soport.ApiService.uriUpdatePbStatus;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -48,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
     protected static final String logMainActivity = "MAIN_ACTIVITY";
     protected static final String logLogout = "logLogout";
     protected static final String logPurchaseOrder = "logPurchaseOrder";
+    protected static final String logUpdatePbStatus = "logUpdatePbStatus";
 
     //components of view
     protected View mProgressView;
@@ -86,8 +89,7 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                new UpdatePbStatus(view).execute((Void) null);
             }
         });
 
@@ -137,6 +139,63 @@ public class MainActivity extends AppCompatActivity {
     public void logOut() {
         logOut = new LogOut();
         logOut.execute((Void) null);
+    }
+
+    public class UpdatePbStatus extends AsyncTask<Void, Void, Boolean> {
+
+        protected View view;
+        protected PanicButton responsePb;
+
+        public UpdatePbStatus(View view){
+            this.view = view;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            //request logout rest service
+            restTemplate.getMessageConverters().add(new StringHttpMessageConverter());
+            HeaderRequest headerRequest = new HeaderRequest("pbstatus");
+            try {
+                HttpEntity<String> requestEntity = new HttpEntity<String>("data=" + mp.writeValueAsString(headerRequest), requestHeaders());
+                ResponseEntity<String> response = restTemplate.exchange(uriUpdatePbStatus, HttpMethod.POST, requestEntity, String.class, requestEntity);
+                Log.d(logUpdatePbStatus, "reponse of service updatepbstatus" + response.getBody());
+                if (response.getStatusCode() != HttpStatus.OK) {
+                    throw new HttpServerErrorException(response.getStatusCode());
+                } else {
+                    responsePb = mp.readValue(response.getBody(), PanicButton.class);
+                    if (responsePb.getResult().equals("success")) {
+                        return true;
+                    }
+                }
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+                return false;
+            } catch (IOException e) {
+                e.printStackTrace();
+                return false;
+            }
+            return false;
+        }
+
+        @Override
+        protected void onPostExecute(final Boolean success) {
+            if (success) {
+                Snackbar.make(view, "Panic Button is turn " + responsePb.getPb().getStatus(), Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            } else {
+                msg = Toast.makeText(MainActivity.this, "ERROR to change panic button", Toast.LENGTH_LONG);
+                msg.show();
+            }
+        }
+
+        @Override
+        protected void onCancelled() {
+            msg = Toast.makeText(
+                    getApplicationContext(),
+                    "Request canceled.",
+                    Toast.LENGTH_LONG);
+            msg.show();
+        }
     }
 
     public class LogOut extends AsyncTask<Void, Void, Boolean> {

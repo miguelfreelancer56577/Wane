@@ -34,6 +34,7 @@ import java.util.List;
 import app.wane.com.adapters.AdapterPurchaseOrderDetails;
 import app.wane.com.model.CatPurchaseOrder;
 import app.wane.com.model.PurchaseOrderDetail;
+import app.wane.com.request.StatusPurchase;
 import app.wane.com.response.ListCatPurchaseStatus;
 import app.wane.com.response.ListPurchaseOrderDetail;
 import app.wane.com.soport.HeaderRequest;
@@ -64,6 +65,7 @@ public class PurchaseOrderDetails extends AppCompatActivity {
     protected List<CatPurchaseOrder> catalog;
     //url from google maps
     protected String mapurl;
+    protected String poid;
     //components
     protected Spinner cmbStatusMessenger;
     protected Button btnSaveStatusMessenger;
@@ -113,6 +115,7 @@ public class PurchaseOrderDetails extends AppCompatActivity {
 
         //url map
         mapurl = params[2];
+        poid = params[0];
 
         //load details of purchase
         if(detailsPurchase == null){
@@ -304,9 +307,9 @@ public class PurchaseOrderDetails extends AppCompatActivity {
         protected Boolean doInBackground(Integer... params) {
             //request logout rest service
             restTemplate.getMessageConverters().add(new StringHttpMessageConverter());
-            HeaderRequest headerRequest = new HeaderRequest("updatepostatus", params[0].toString());
+            StatusPurchase statusPurchase = new StatusPurchase("updatepostatus", params[0].toString(), poid);
             try {
-                HttpEntity<String> requestEntity = new HttpEntity<String>("data=" + mp.writeValueAsString(headerRequest), requestHeaders());
+                HttpEntity<String> requestEntity = new HttpEntity<String>("data=" + mp.writeValueAsString(statusPurchase), requestHeaders());
                 ResponseEntity<String> response = restTemplate.exchange(uriUpdatePoStatus, HttpMethod.POST, requestEntity, String.class, requestEntity);
                 Log.d(logChangeStatusPurchase, "reponse of service changeStatusPurchase" + response.getBody());
                 if (response.getStatusCode() != HttpStatus.OK) {
