@@ -10,16 +10,19 @@ import app.wane.com.soport.HeaderRequest;
 public class LocationReport extends HeaderRequest {
 
     @JsonProperty("location")
-    public Object location;
+    public Location location;
 
     public LocationReport(String option, final String SelfLatitude, final String SelfLongitude) {
         super(option);
-        this.location = new Object(){
-            @JsonProperty("latitude")
-            public String latitude = SelfLatitude;
-            @JsonProperty("longitude")
-            public String longitude = SelfLongitude;
-        };
+        this.location = new Location(SelfLatitude, SelfLongitude);
+    }
+
+    public Location getLocation() {
+        return location;
+    }
+
+    public void setLocation(Location location) {
+        this.location = location;
     }
 
     @Override
@@ -46,5 +49,63 @@ public class LocationReport extends HeaderRequest {
         int result = super.hashCode();
         result = 31 * result + (location != null ? location.hashCode() : 0);
         return result;
+    }
+
+    public class Location{
+        @JsonProperty("latitude")
+        public String latitude;
+        @JsonProperty("longitude")
+        public String longitude;
+
+        public Location(){}
+
+        public Location(String latitude, String longitude) {
+            this.latitude = latitude;
+            this.longitude = longitude;
+        }
+
+        public String getLatitude() {
+            return latitude;
+        }
+
+        public void setLatitude(String latitude) {
+            this.latitude = latitude;
+        }
+
+        public String getLongitude() {
+            return longitude;
+        }
+
+        public void setLongitude(String longitude) {
+            this.longitude = longitude;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof Location)) return false;
+
+            Location location = (Location) o;
+
+            if (latitude != null ? !latitude.equals(location.latitude) : location.latitude != null)
+                return false;
+            return !(longitude != null ? !longitude.equals(location.longitude) : location.longitude != null);
+
+        }
+
+        @Override
+        public int hashCode() {
+            int result = latitude != null ? latitude.hashCode() : 0;
+            result = 31 * result + (longitude != null ? longitude.hashCode() : 0);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "Location{" +
+                    "latitude='" + latitude + '\'' +
+                    ", longitude='" + longitude + '\'' +
+                    '}';
+        }
     }
 }

@@ -35,6 +35,7 @@ import app.wane.com.adapters.AdapterPurchaseOrder;
 import app.wane.com.model.PurchaseOrder;
 import app.wane.com.response.ListPurchaseOrder;
 import app.wane.com.response.PanicButton;
+import app.wane.com.service.TrackingService;
 import app.wane.com.soport.HeaderRequest;
 import app.wane.com.soport.HeaderResponse;
 import app.wane.com.soport.TokenRest;
@@ -114,6 +115,11 @@ public class MainActivity extends AppCompatActivity {
             pedidos = new Pedidos();
             pedidos.execute((Void) null);
         }
+
+        //send a location of the messenger
+        Intent intent = new Intent(MainActivity.this, TrackingService.class);
+        intent.setAction(TrackingService.ACTION_RUN_ISERVICE);
+        startService(intent);
     }
 
     @Override
@@ -230,6 +236,7 @@ public class MainActivity extends AppCompatActivity {
         protected void onPostExecute(final Boolean success) {
             if (success) {
                 TokenRest.val = "0";
+                stopService(new Intent(MainActivity.this, TrackingService.class));
                 finish();
             } else {
                 msg = Toast.makeText(MainActivity.this, "ERROR to logout", Toast.LENGTH_LONG);
